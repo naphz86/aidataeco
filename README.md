@@ -23,7 +23,7 @@ Die Arbeit verbindet ein formales Modell von Datennetzen und Data Products mit e
 - [Prüfen und weiterentwickeln](#prüfen-und-weiterentwickeln)
 - [Stand und Grenzen](#stand-und-grenzen)
 - [Quellen und weiterführende Arbeiten](#quellen-und-weiterführende-arbeiten)
-- [Ausblick: spätere Codegenerierung](#ausblick-spätere-codegenerierung)
+- [Software und Tests](#software-und-tests)
 - [Lizenz und Nutzung](#lizenz-und-nutzung)
 
 ## Überblick
@@ -158,6 +158,9 @@ In einem kleineren Unternehmen kann eine Person mehrere Rollen ausüben. Die Ent
 aidataeco/
 ├── README.md
 ├── LICENSE
+├── pyproject.toml
+├── src/
+├── tests/
 └── science/
     ├── aidataeco.tex
     ├── aidataeco.pdf
@@ -171,6 +174,9 @@ Im Arbeitsverzeichnis können zusätzlich lokale LaTeX-Hilfsdateien wie `.aux`, 
 | [`science/aidataeco.tex`](science/aidataeco.tex) | Maßgebliche editierbare Quelle der deutschen Arbeit. |
 | [`science/aidataeco.pdf`](science/aidataeco.pdf) | Daraus erzeugte Lesefassung; nach Änderungen an der TeX-Quelle neu bauen. |
 | [`science/aidataeco.synctex.gz`](science/aidataeco.synctex.gz) | SyncTeX-Zuordnung zwischen PDF und TeX-Quelle für unterstützte Editoren. |
+| [`src/`](src) | Python-Bausteine zur Arbeit (siehe [Software und Tests](#software-und-tests)). |
+| [`tests/`](tests) | Automatisierte Tests mit `pytest`. |
+| [`pyproject.toml`](pyproject.toml) | Paket-, Abhängigkeits-, pytest- und Coverage-Konfiguration. |
 | [`LICENSE`](LICENSE) | Nutzungsbedingungen für die Inhalte dieses Repositories. |
 | [`.gitignore`](.gitignore) | Ignorierte lokale Umgebungs- und Build-Dateien. |
 
@@ -184,7 +190,7 @@ Für das Erstellen der PDF-Datei benötigt man:
 - `latexmk`;
 - den für das Dokument benötigten LaTeX-Paketbestand. Verwendet werden unter anderem `babel`, `lmodern`, `amsmath`, `amssymb`, `amsthm`, `geometry`, `graphicx`, `hyperref`, `booktabs`, `listings`, `xcolor`, `enumitem` und `microtype`.
 
-Die Arbeit ist UTF-8-kodiert und mit `pdflatex`/`latexmk` aufgebaut. Eine Python-, Node.js- oder C++-Laufzeit ist für das aktuelle Repository nicht erforderlich. Es gibt derzeit kein Softwarepaket, keine Kommandozeilenanwendung und keine automatisierte Test-Suite.
+Die Arbeit ist UTF-8-kodiert und mit `pdflatex`/`latexmk` aufgebaut. Für den Python-Code wird Python ab 3.11 benötigt, siehe [Software und Tests](#software-und-tests); für die PDF ist keine Python-Laufzeit nötig.
 
 ## PDF erstellen
 
@@ -227,7 +233,7 @@ Ein typischer Build erzeugt `.aux`, `.fdb_latexmk`, `.fls`, `.log`, `.out` und `
 
 ## Prüfen und weiterentwickeln
 
-Für reine Änderungen an der Dokumentation gibt es derzeit keine automatisierten Dokumentationstests. Nach einer Änderung an der TeX-Quelle empfiehlt sich mindestens:
+Für den Python-Code gibt es Tests (siehe [Software und Tests](#software-und-tests)); für reine Änderungen an der Dokumentation gibt es keine automatisierten Dokumentationstests. Nach einer Änderung an der TeX-Quelle empfiehlt sich mindestens:
 
 1. die PDF mit `latexmk -pdf -interaction=nonstopmode -halt-on-error ...` zu bauen;
 2. den Build-Exit-Code zu kontrollieren;
@@ -255,7 +261,7 @@ git status --short
 
 ## Stand und Grenzen
 
-Dieses Repository ist derzeit ein **wissenschaftliches Dokumentationsprojekt**, kein implementiertes KI- oder Datenprodukt. Die formalen Modelle strukturieren die Argumentation; sie stellen weder ein zertifiziertes Messverfahren noch eine produktionsreife Governance-Lösung dar.
+Dieses Repository ist in erster Linie ein **wissenschaftliches Dokumentationsprojekt**. Der Code in `src/` setzt Definitionen und Kennzahlen der Arbeit als geprüfte Bausteine um; er ist kein fertiges KI- oder Datenprodukt. Die formalen Modelle strukturieren die Argumentation; sie stellen weder ein zertifiziertes Messverfahren noch eine produktionsreife Governance-Lösung dar. Ein erfolgreicher Testlauf ist kein empirischer Wirksamkeitsnachweis und keine Freigabe für autonome Handlungen.
 
 Die Fallstudie ist illustrativ und wird auf das zugrunde liegende Webinar zurückgeführt. Die dort genannten Prozentwerte werden in der Arbeit als Präsentationsangaben gekennzeichnet und nicht als unabhängig verifizierte Primärerhebung ausgegeben. Für Entscheidungen in einem Unternehmen wären geeignete interne Daten, fachlich geprüfte Referenzfälle und eine nachvollziehbare Fehlerbewertung erforderlich.
 
@@ -271,33 +277,35 @@ Die Arbeit führt die folgenden Quellen im Literaturverzeichnis:
 
 Die Arbeiten [2] und [3] sind ergänzende wissenschaftliche Vorarbeiten des Autors. Ihre Nennung bedeutet nicht, dass die vorliegende Arbeit ein SAT-Solver- oder ein Wirtschaftssystem-Simulationspaket enthält.
 
-## Ausblick: spätere Codegenerierung
+## Software und Tests
 
-**Im aktuellen Stand wird kein Anwendungscode bereitgestellt.** Dieses README beschreibt fachliche Begriffe und wissenschaftliche Annahmen so, dass spätere Implementierungen gezielt daraus entwickelt werden können, ohne eine vorhandene Funktionalität vorzutäuschen.
+`src/` setzt das Dokumentmodell als typisierte, exakt rechnende (`fractions.Fraction`) Python-Bausteine um. Fehlende Evidenz zählt nie als Erfolg: unbekannte Qualität, fehlende Provenance, unbeantwortete Testfragen und fehlende Verantwortliche werden als solche ausgewiesen, ungültige Eingaben lösen `ValueError` aus.
 
-Mögliche nächste, unabhängig prüfbare Softwarebausteine wären:
+| Modul | Inhalt aus der Arbeit |
+|---|---|
+| `model` | Datennetz, Data Product, Label, Provenance, Antworten |
+| `errorbudget` | Stakes, Error Budget, Fehlerzerlegung, Gut-genug-Bedingung |
+| `diagnosis` | Abweichung als Bayes-Indikator, Lern-Loop, VOI-Bedingung, Abweichungsursachen |
+| `governance` | Vertrauensstufen, drei Verantwortlichkeiten, Freigabehindernisse |
+| `evaluation` | Bestehensquote, erklärter Anteil, Provenance-Abdeckung, Vollständigkeit, Aktualität |
+| `integration` | Auswahl von Datenquellen unter Budget und Abhängigkeiten (Erweiterung der VOI-Bedingung) |
+| `experiment` | reproduzierbares Protokoll von Eingaben, Konfiguration, Versionen, Resultaten |
+| `casestudy` | illustrative Fallstudie zur sinkenden Marge mit den Zahlen der Arbeit |
 
-- ein typisiertes Datenmodell für Data Products, Datenquellen, Attribute, Joins, Definitionen und Versionen;
-- eine Provenance-Struktur für Antworten mit Quelle, Datenstichtag, Definition und den verwendeten Transformationen;
-- Validierungen für Vollständigkeit, Aktualität, Berechtigungen und referenzielle Verknüpfungen;
-- ein Testfallformat mit Frage, fachlich geprüfter Referenz, Toleranz, Stakes und erwarteter Abdeckung;
-- Auswertungen für gewichtete Bestehensquote, erklärten Anteil, Provenance-Abdeckung und dokumentierte Abweichungen;
-- ein reproduzierbarer Experimentpfad, der Eingaben, Konfiguration, Versionen und Resultate protokolliert.
+### Wiederverwendung von subgraph-sat-solver-econ
 
-### Leitplanken für Implementierungen
+Entscheider, Schaltkreisbausteine und die Formel der Rechenlücke werden nicht neu geschrieben, sondern aus [`subgraph-sat-solver-econ`](https://github.com/naphz86/subgraph-sat-solver-econ) importiert (`subgraph_sat_solver_econ`): `integration` formuliert nur das Problem und nutzt `Problem`, `maximize` und `DpllBackend`; `evaluation` berechnet den erklärten Anteil mit `computation_gap` und `total_output`. Die Abhängigkeit steht in `pyproject.toml`. Damit das Referenzprojekt unter diesem Namen importierbar ist, braucht es dort die Paketabbildung `package-dir = { subgraph_sat_solver_econ = "src" }` (siehe dessen `pyproject.toml`).
 
-1. **Vom Dokumentmodell ausgehen:** Begriffe und Definitionen aus der Arbeit zunächst in klare, typisierte Schnittstellen übersetzen.
-2. **Fachliche Verantwortung sichtbar halten:** Data Owner, Data Product Owner und Use-Case Owner nicht durch implizite Defaults ersetzen.
-3. **Fehlende Evidenz nicht als Erfolg behandeln:** Unbekannte Qualität, fehlende Provenance und nicht verfügbare Daten deutlich als solche ausweisen.
-4. **Referenzen nachvollziehbar machen:** Berechnete Kennzahlen auf Datenquellen, Datenstand, Definition und Testfall zurückführen.
-5. **Metriken korrekt benennen:** Bestehensquote, erklärter Anteil und Datenvollständigkeit messen unterschiedliche Eigenschaften und nicht pauschal als „KI-Genauigkeit“ zusammenfassen.
-6. **Unsicherheit und Fehler explizit behandeln:** Keine stillen Standardwerte oder success-shaped Ergebnisse, wenn Eingaben ungültig, Daten unvollständig oder Berechnungen nicht möglich sind.
-7. **Anwendungen nach Stakes begrenzen:** Eine Kennzahl oder ein erfolgreicher Testlauf ist keine automatische Freigabe für autonome Handlungen.
-8. **Klein und reproduzierbar beginnen:** Erst einen klar abgegrenzten Anwendungsfall samt Referenzdaten, Tests und dokumentierten Annahmen umsetzen.
-9. **Datenschutz und Zugriff früh entwerfen:** Beispieldaten und Tests sollten ohne vertrauliche Echtdaten auskommen; echte Datenzugriffe benötigen ausdrückliche Berechtigungen.
-10. **Wissenschaftliche Aussagen von Implementierungsfakten trennen:** Ein Codebeispiel ist kein empirischer Wirksamkeitsnachweis und ein formaler Rahmen keine Garantie für reale Datenqualität.
+### Installieren und testen
 
-Eine mögliche spätere Struktur könnte beispielsweise `src/` für Implementierung, `tests/` für automatisierte Prüfungen und `examples/` für synthetische, nicht vertrauliche Demonstrationsdaten enthalten. Diese Verzeichnisse sind **Vorschläge für zukünftige Entwicklung und existieren derzeit nicht**.
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+pytest
+```
+
+`pytest` führt alle Tests aus und erzeugt den Coverage-Bericht (Zeilen und Zweige) als HTML unter `doc/coverage/index.html`. Der Bericht ist ein Build-Artefakt und wird bei Bedarf neu erzeugt.
 
 ## Lizenz und Nutzung
 
