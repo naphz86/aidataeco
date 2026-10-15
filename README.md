@@ -63,8 +63,9 @@ Die LaTeX-Arbeit entwickelt das Konzept in folgender Reihenfolge:
 7. **Verantwortung und Freigabe** – erläutert Data Owner, Data Product Owner und Use-Case Owner.
 8. **Schrittweises Vorgehen in der Praxis** – beschreibt den Aufbau und unterscheidet Schwerpunkte für Mittelstand und Großunternehmen.
 9. **Stolperfallen, Fortschrittsmessung und Checkliste** – gibt Prüffragen und Kennzahlen für die praktische Anwendung.
-10. **Diskussion, Schlussfolgerung und Glossar** – fasst die Grenzen des Modells und die zentralen Aussagen zusammen.
-11. **Anhang** – enthält formale Erweiterungen und eine Beweisskizze zur Value of Information (VOI).
+10. **Experimentelle Auswertung** – prüft die ausführbare Umsetzung an der Fallstudie und an synthetischen Instanzen (Budgetabhängigkeit der Integrationsauswahl, Skalierung, erklärter Anteil, Reproduzierbarkeit) und dokumentiert Hardware, Versuchsaufbau, Ergebnisse und Grenzen.
+11. **Diskussion, Ausblick, Schlussfolgerung und Glossar** – ordnet die Befunde ein, nennt offene Forschungsfragen und fasst die Arbeit ausführlich zusammen.
+12. **Anhang** – enthält formale Erweiterungen und eine Beweisskizze zur Value of Information (VOI).
 
 Das vollständige Inhaltsverzeichnis steht auch am Anfang des [PDFs](science/aidataeco.pdf).
 
@@ -160,11 +161,16 @@ aidataeco/
 ├── LICENSE
 ├── pyproject.toml
 ├── src/
+│   ├── experiments.py   # Experimente E1-E5
+│   ├── plots.py                 # Abbildungen aus den JSON-Protokollen
+│   └── results/                 # JSON-Protokolle der Experimente
+│       └── plots/               # erzeugte Abbildungen (PDF)
 ├── tests/
 └── science/
     ├── aidataeco.tex
     ├── aidataeco.pdf
-    └── aidataeco.synctex.gz
+    ├── aidataeco.synctex.gz
+    └── abb_*.pdf                # Kopien der Abbildungen für die TeX-Arbeit
 ```
 
 Im Arbeitsverzeichnis können zusätzlich lokale LaTeX-Hilfsdateien wie `.aux`, `.log`, `.toc`, `.out`, `.fls` und `.fdb_latexmk` entstehen. Sie sind Build-Artefakte und keine eigenständigen Quellen der Arbeit.
@@ -176,6 +182,7 @@ Im Arbeitsverzeichnis können zusätzlich lokale LaTeX-Hilfsdateien wie `.aux`, 
 | [`science/aidataeco.synctex.gz`](science/aidataeco.synctex.gz) | SyncTeX-Zuordnung zwischen PDF und TeX-Quelle für unterstützte Editoren. |
 | [`src/`](src) | Python-Bausteine zur Arbeit (siehe [Software und Tests](#software-und-tests)). |
 | [`tests/`](tests) | Automatisierte Tests mit `pytest`. |
+| [`src/results/`](src/results) | JSON-Protokolle der Experimente (mit Fingerabdruck) und Plots. |
 | [`pyproject.toml`](pyproject.toml) | Paket-, Abhängigkeits-, pytest- und Coverage-Konfiguration. |
 | [`LICENSE`](LICENSE) | Nutzungsbedingungen für die Inhalte dieses Repositories. |
 | [`.gitignore`](.gitignore) | Ignorierte lokale Umgebungs- und Build-Dateien. |
@@ -295,6 +302,15 @@ Die Arbeiten [2] und [3] sind ergänzende wissenschaftliche Vorarbeiten des Auto
 ### Wiederverwendung von subgraph-sat-solver-econ
 
 Entscheider, Schaltkreisbausteine und die Formel der Rechenlücke werden nicht neu geschrieben, sondern aus [`subgraph-sat-solver-econ`](https://github.com/naphz86/subgraph-sat-solver-econ) importiert (`subgraph_sat_solver_econ`): `integration` formuliert nur das Problem und nutzt `Problem`, `maximize` und `DpllBackend`; `evaluation` berechnet den erklärten Anteil mit `computation_gap` und `total_output`. Die Abhängigkeit steht in `pyproject.toml`. Damit das Referenzprojekt unter diesem Namen importierbar ist, braucht es dort die Paketabbildung `package-dir = { subgraph_sat_solver_econ = "src" }` (siehe dessen `pyproject.toml`).
+
+### Experimente ausführen
+
+```bash
+python src/experiments.py   # E1-E5, schreibt src/results/*.json
+python src/plots.py                 # Abbildungen nach src/results/plots/ und Kopie nach science/
+```
+
+Die Kosten und Abhängigkeiten der Integrationsoptionen in den Experimenten sind Annahmen; die Laufzeiten hängen von der Hardware ab (siehe Abschnitt „Experimentelle Auswertung“ der Arbeit).
 
 ### Installieren und testen
 

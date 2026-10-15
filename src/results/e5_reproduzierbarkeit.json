@@ -1,0 +1,17 @@
+{
+  "config": {
+    "wiederholungen": 5
+  },
+  "fingerprint": "4a0e003cbd00828531f5ef8758b727b3d8ec72442c0b7599e8380661fc2a64d5",
+  "inputs": {},
+  "name": "e5_reproduzierbarkeit",
+  "results": {
+    "ergebnisse_gleich": true,
+    "fingerprint": "53eccfadfaa6ae80869a9fcfe62698c7ee82dbd8504e4e3cc3f80c316d440789",
+    "fingerprints_gleich": true
+  },
+  "versions": {
+    "python": "3.13.16",
+    "subgraph-sat-solver-econ": "git 7c5eb9b (main)"
+  }
+}

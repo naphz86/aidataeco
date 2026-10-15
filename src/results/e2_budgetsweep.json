@@ -1,0 +1,236 @@
+{
+  "config": {
+    "budgets": [
+      null,
+      0,
+      20,
+      40,
+      60,
+      80,
+      100,
+      120,
+      140,
+      160,
+      180,
+      200
+    ],
+    "repeats": 5
+  },
+  "fingerprint": "f161fb88fcc2db165f082819efbfe26657668b722a0effc66a2b41a58d5915ab",
+  "inputs": {
+    "optionen": [
+      {
+        "cost": 80,
+        "gain": 230,
+        "name": "Frachtzuordnung",
+        "requires": []
+      },
+      {
+        "cost": 60,
+        "gain": 150,
+        "name": "Produktgruppe",
+        "requires": [
+          "Stammdaten-Mapping"
+        ]
+      },
+      {
+        "cost": 40,
+        "gain": 0,
+        "name": "Stammdaten-Mapping",
+        "requires": []
+      },
+      {
+        "cost": 30,
+        "gain": 0,
+        "name": "Rabatt-Feindaten",
+        "requires": []
+      }
+    ]
+  },
+  "name": "e2_budgetsweep",
+  "results": {
+    "alle_netto_gleich": true,
+    "zeilen": [
+      {
+        "aufrufe": 17,
+        "budget": null,
+        "gewaehlt": [
+          "Frachtzuordnung",
+          "Produktgruppe",
+          "Stammdaten-Mapping"
+        ],
+        "kosten": 180,
+        "nettonutzen": 200,
+        "referenz_menge": [
+          "Frachtzuordnung",
+          "Produktgruppe",
+          "Stammdaten-Mapping"
+        ],
+        "referenz_netto": 200,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.013065943000015068
+      },
+      {
+        "aufrufe": 17,
+        "budget": 0,
+        "gewaehlt": [],
+        "kosten": 0,
+        "nettonutzen": 0,
+        "referenz_menge": [],
+        "referenz_netto": 0,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.013433548000023166
+      },
+      {
+        "aufrufe": 17,
+        "budget": 20,
+        "gewaehlt": [],
+        "kosten": 0,
+        "nettonutzen": 0,
+        "referenz_menge": [],
+        "referenz_netto": 0,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.015243482000016684
+      },
+      {
+        "aufrufe": 17,
+        "budget": 40,
+        "gewaehlt": [],
+        "kosten": 0,
+        "nettonutzen": 0,
+        "referenz_menge": [],
+        "referenz_netto": 0,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.01450114599998642
+      },
+      {
+        "aufrufe": 17,
+        "budget": 60,
+        "gewaehlt": [],
+        "kosten": 0,
+        "nettonutzen": 0,
+        "referenz_menge": [],
+        "referenz_netto": 0,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.014888871999971798
+      },
+      {
+        "aufrufe": 17,
+        "budget": 80,
+        "gewaehlt": [
+          "Frachtzuordnung"
+        ],
+        "kosten": 80,
+        "nettonutzen": 150,
+        "referenz_menge": [
+          "Frachtzuordnung"
+        ],
+        "referenz_netto": 150,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.0160182500000019
+      },
+      {
+        "aufrufe": 17,
+        "budget": 100,
+        "gewaehlt": [
+          "Frachtzuordnung"
+        ],
+        "kosten": 80,
+        "nettonutzen": 150,
+        "referenz_menge": [
+          "Frachtzuordnung"
+        ],
+        "referenz_netto": 150,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.01762931700000081
+      },
+      {
+        "aufrufe": 17,
+        "budget": 120,
+        "gewaehlt": [
+          "Frachtzuordnung"
+        ],
+        "kosten": 80,
+        "nettonutzen": 150,
+        "referenz_menge": [
+          "Frachtzuordnung"
+        ],
+        "referenz_netto": 150,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.01716411400002471
+      },
+      {
+        "aufrufe": 17,
+        "budget": 140,
+        "gewaehlt": [
+          "Frachtzuordnung"
+        ],
+        "kosten": 80,
+        "nettonutzen": 150,
+        "referenz_menge": [
+          "Frachtzuordnung"
+        ],
+        "referenz_netto": 150,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.016915715000038745
+      },
+      {
+        "aufrufe": 17,
+        "budget": 160,
+        "gewaehlt": [
+          "Frachtzuordnung"
+        ],
+        "kosten": 80,
+        "nettonutzen": 150,
+        "referenz_menge": [
+          "Frachtzuordnung"
+        ],
+        "referenz_netto": 150,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.01697950199996967
+      },
+      {
+        "aufrufe": 17,
+        "budget": 180,
+        "gewaehlt": [
+          "Frachtzuordnung",
+          "Produktgruppe",
+          "Stammdaten-Mapping"
+        ],
+        "kosten": 180,
+        "nettonutzen": 200,
+        "referenz_menge": [
+          "Frachtzuordnung",
+          "Produktgruppe",
+          "Stammdaten-Mapping"
+        ],
+        "referenz_netto": 200,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.01678775699997459
+      },
+      {
+        "aufrufe": 17,
+        "budget": 200,
+        "gewaehlt": [
+          "Frachtzuordnung",
+          "Produktgruppe",
+          "Stammdaten-Mapping"
+        ],
+        "kosten": 180,
+        "nettonutzen": 200,
+        "referenz_menge": [
+          "Frachtzuordnung",
+          "Produktgruppe",
+          "Stammdaten-Mapping"
+        ],
+        "referenz_netto": 200,
+        "uebereinstimmung_netto": true,
+        "zeit_median_s": 0.018790572999989763
+      }
+    ]
+  },
+  "versions": {
+    "python": "3.13.16",
+    "subgraph-sat-solver-econ": "git 7c5eb9b (main)"
+  }
+}

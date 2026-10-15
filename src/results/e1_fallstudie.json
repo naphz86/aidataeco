@@ -1,0 +1,21 @@
+{
+  "config": {},
+  "fingerprint": "d5fc526a53858ff23ca87e171dcb93a7df16fe5f88ee9bae4224c7a49cf5ff71",
+  "inputs": {},
+  "name": "e1_fallstudie",
+  "results": {
+    "abweichung": "440",
+    "anteile": {
+      "Expressfracht": "23/44",
+      "Produktmix": "15/44",
+      "Rabatte": "3/22"
+    },
+    "db2_erwartet": "3080",
+    "db2_tatsaechlich": "2640",
+    "erklaerter_anteil": "3/22"
+  },
+  "versions": {
+    "python": "3.13.16",
+    "subgraph-sat-solver-econ": "git 7c5eb9b (main)"
+  }
+}
