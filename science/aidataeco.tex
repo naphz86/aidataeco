@@ -1,5 +1,4 @@
-% -*- latex -*-
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12pt,twoside]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[german]{babel}
@@ -31,7 +30,7 @@
 
 % Theorem environments
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
+\newtheorem{definition}{Definition}[chapter]
 \newtheorem{bemerkung}[definition]{Bemerkung}
 \newtheorem{satz}[definition]{Satz}
 \newtheorem{lemma}[definition]{Lemma}
@@ -57,14 +56,14 @@ Diese Arbeit untersucht, wann das Datennetz eines Unternehmens für eine konkret
 \tableofcontents
 \newpage
 
-\section{Einleitung}
+\chapter{Einleitung}
 Die drei leitenden Gedanken dieser Arbeit sind eng miteinander verbunden. Erstens hängt Vertrauen in eine Antwort nicht davon ab, ob sie vollkommen fehlerfrei ist, sondern davon, ob ein möglicher Fehler für den konkreten Verwendungszweck klein genug ist. Zweitens bezeichnet das Datennetz mehr als die Summe gespeicherter Daten: Entscheidend sind auch Verknüpfungen, Zugriffswege, gemeinsame Definitionen und Aktualität. Dasselbe KI-Modell kann deshalb auf einem gut verbundenen Netz nützliche und auf einem fragmentierten Netz irreführende Antworten geben. Drittens können KI-Antworten bereits vor vollständiger Datenreife als Hinweise und Gegenprüfung der eigenen wirtschaftlichen Analyse nützlich sein.
 
-Diese Perspektive vermeidet zwei Extreme: KI-Antworten weder blind als Wahrheit zu übernehmen noch den Einsatz bis zu einer unerreichbaren Perfektion der Daten aufzuschieben. Stattdessen werden Nutzung und Autonomie nach den möglichen Folgen eines Fehlers gestuft. Die Arbeit führt zunächst in die Lücke zwischen KI-Ambition und Datenreife ein und erläutert eine Fallstudie zur sinkenden Marge. Danach folgen ein formales Modell, eine ökonomische Bedingung für ausreichende Qualität und ein Lernkreislauf für Abweichungen. Abschließend werden Data Products, Verantwortlichkeiten, Umsetzungsschritte, Unternehmensgrößen, Messgrößen und eine Go-live-Checkliste behandelt. Ein eigener Abschnitt (Abschnitt~\ref{sec:experiment}) prüft die ausführbare Umsetzung des Modells an der Fallstudie und an synthetischen Instanzen und dokumentiert Versuchsaufbau, Hardware und Ergebnisse; Diskussion, Ausblick und Schlussfolgerung (Abschnitte~\ref{sec:discussion} und~\ref{sec:conclusion}) ordnen die Befunde ein und benennen offene Forschungsfragen.
+Diese Perspektive vermeidet zwei Extreme: KI-Antworten weder blind als Wahrheit zu übernehmen noch den Einsatz bis zu einer unerreichbaren Perfektion der Daten aufzuschieben. Stattdessen werden Nutzung und Autonomie nach den möglichen Folgen eines Fehlers gestuft. Die Arbeit führt zunächst in die Lücke zwischen KI-Ambition und Datenreife ein und erläutert eine Fallstudie zur sinkenden Marge. Danach folgen ein formales Modell, eine ökonomische Bedingung für ausreichende Qualität und ein Lernkreislauf für Abweichungen. Abschließend werden Data Products, Verantwortlichkeiten, Umsetzungsschritte, Unternehmensgrößen, Messgrößen und eine Go-live-Checkliste behandelt. Ein eigenes Kapitel (Kapitel~\ref{sec:experiment}) prüft die ausführbare Umsetzung des Modells an der Fallstudie und an synthetischen Instanzen und dokumentiert Versuchsaufbau, Hardware und Ergebnisse; Diskussion, Ausblick und Schlussfolgerung (Kapitel~\ref{sec:discussion} und~\ref{sec:conclusion}) ordnen die Befunde ein und benennen offene Forschungsfragen.
 
 Die Arbeit verfolgt damit vier Beiträge. Erstens begründet sie begrifflich, warum die Eignung eines Datennetzes nur relativ zu einer Frage und ihren Folgen beurteilt werden kann. Zweitens formalisiert sie diese Relation über Fehlerzerlegung, Error Budget und Value of Information. Drittens übersetzt sie das Modell in exakt rechnende, getestete Bausteine, mit denen sich Entscheidungen über Datenintegrationen nachrechnen lassen. Viertens legt sie offen, welche Aussagen daraus tragen und welche nur Rechenbeispiele sind: Die Zahlen der Fallstudie stammen aus einem Webinar, und die Kosten der Integrationen im Experiment sind Annahmen. Die Arbeit ist daher ein konzeptioneller und methodischer Beitrag und kein empirischer Wirksamkeitsnachweis.
 
-\section{Ausgangslage: KI-Ambition und Datenreife}
+\chapter{Ausgangslage: KI-Ambition und Datenreife}
 \label{sec:starting-point}
 
 In der dem Konzept zugrunde liegenden Webinar-Präsentation werden drei Hindernisse für die Nutzung von KI hervorgehoben: eingeschränkter Datenzugriff, unzureichende Datenqualität und voneinander getrennte Systeme. Die dort genannten Umfragewerte dienen hier als Kontext und werden als Angaben aus dem Webinar wiedergegeben \cite{webinar2026}; sie sind keine in dieser Arbeit unabhängig überprüfte Primärerhebung.
@@ -88,21 +87,22 @@ Investitionen & Erfolgreiche Unternehmen investieren laut Präsentation bis zu v
 \end{table}
 \noindent\footnotesize Im Webinar genannte Quellen: Dun \& Bradstreet (10.000 Unternehmen in 32 Ländern, 2026), Bitkom (2026) und Gartner (2026). Die Zuordnung der Einzelwerte zu diesen Quellen wird in der Präsentation nicht näher aufgeschlüsselt.\normalsize
 
-Diese Hindernisse sind nicht primär Modellprobleme. Eingeschränkter Zugriff bedeutet, dass relevante Daten zwar existieren, aber für die fragende Person oder die KI nicht erreichbar sind. Bei Qualitätsproblemen sind Daten vorhanden, aber beispielsweise unvollständig, verspätet oder nicht verlässlich genug. Getrennte Systeme verlieren Beziehungen zwischen Fakten: So kann ein Expressfrachtaufwand im Logistiksystem verbucht sein, ohne mit dem Auftrag verbunden zu sein, der ihn verursacht hat. Ein besseres Sprachmodell schließt diese Lücke nicht von selbst.
+Diese Hindernisse sind nicht primär Modellprobleme. Eingeschränkter Zugriff bedeutet, dass relevante Daten zwar existieren, aber für die fragende Person oder die KI nicht erreichbar sind. Bei Qualitätsproblemen sind Daten vorhanden, aber beispielsweise unvollständig, verspätet oder nicht verlässlich genug. Getrennte Systeme verlieren Beziehungen zwischen Fakten: So kann ein Expressfrachtaufwand im Logistiksystem verbucht sein, ohne mit dem Auftrag verbunden zu sein, der ihn verursacht hat. Ein besseres Sprachmodell schließt diese Lücke nicht von selbst. In produktiven Lernsystemen können solche Abhängigkeiten und Datenpipeline-Probleme zudem langfristige technische Schulden und Wartungsaufwand verursachen \cite{sculley15,polyzotis17}.
+Die Bewertung von Datenqualität ist dabei an den Nutzungskontext zu binden; etablierte Modelle und empirische Arbeiten unterscheiden mehrere, für Datenverbraucher relevante Qualitätsdimensionen \cite{iso5259,iso25012,wangstrong96,pipino02}.
 
-Damit lautet die passende Diagnose nicht nur „Ist das KI-Modell gut genug?“, sondern vor allem: „Ist unser Datennetz für diese konkrete Frage gut genug?“ Die zeitliche Lücke zwischen bereits laufenden oder geplanten Agenten und geringer eingeschätzter Datenreife macht eine solche Prüfung besonders wichtig.
+Damit lautet die passende Diagnose nicht nur „Ist das KI-Modell gut genug?“, sondern vor allem: „Ist unser Datennetz für diese konkrete Frage gut genug?“ Die zeitliche Lücke zwischen bereits laufenden oder geplanten Agenten und geringer eingeschätzter Datenreife macht eine solche Prüfung besonders wichtig. Für die organisatorische Einordnung bieten das NIST AI Risk Management Framework und die einschlägigen ISO-Normen aktuelle Referenzen \cite{nistairmf23,iso42001,iso23894,euaiact24}.
 
-\section{Fallstudie: Warum sinkt die Marge?}
+\chapter{Fallstudie: Warum sinkt die Marge?}
 \label{sec:case-study}
 
 Die folgende illustrative Fallstudie greift die im Webinar präsentierte Situation eines Maschinenbauzulieferers für das erste bis dritte Quartal 2026 auf. Sie veranschaulicht, wie eine sachlich teilweise richtige KI-Antwort durch ein unvollständiges Datennetz zu einer unverhältnismäßigen Empfehlung führen kann.
 
-\subsection{Ausgangslage und KI-Antwort}
+\section{Ausgangslage und KI-Antwort}
 Der Umsatz stieg gegenüber dem Vorjahr von 10{,}0\,Mio.\,€ auf 11{,}0\,Mio.\,€. Gleichzeitig sank die Deckungsbeitragsmarge II (DB\,II) von 28\,\% auf 24\,\%. Bei Anwendung der Vorjahresmarge auf den aktuellen Umsatz wären 3{,}08\,Mio.\,€ DB\,II erzielt worden; tatsächlich waren es 2{,}64\,Mio.\,€. Die Differenz beträgt 440\,T€.
 
 Auf die Frage „Warum sinkt unsere Marge, und was sollten wir tun?“ verwies die KI vor allem auf steigende Rabatte. Die durchschnittliche Rabattquote sei von 6{,}1\,\% auf 6{,}7\,\% gestiegen, besonders bei Großkunden. Als Maßnahmen schlug sie Genehmigungen für Rabatte über 5\,\%, Neuverhandlungen mit den zehn größten Kunden und eine monatliche Berichterstattung vor. Die Antwort klang plausibel und konkret, enthielt aber weder nachvollziehbare Quellenangaben noch einen Datenstichtag.
 
-\subsection{Ergebnis der Controlling-Analyse}
+\section{Ergebnis der Controlling-Analyse}
 Die nachfolgende interne Analyse ordnete den Margenabstand drei Ursachen zu. Der Expressfrachtfall betraf 31 teure Eillieferungen, die nach einem Engpass bei einem Lieferantenteil erforderlich waren, um den Kunden Nord termingerecht zu beliefern.
 
 \begin{table}[htbp]
@@ -125,7 +125,7 @@ Rabatte & 60\,T€ & ca. 14\,\% & Ja & In den zugänglichen Vertriebsdaten sicht
 
 Kunde Nord erwirtschaftete 2{,}0\,Mio.\,€ Umsatz. Die teuren Eillieferungen waren nicht durch ein Fehlverhalten des Kunden verursacht worden. Eine auf die KI-Empfehlung gestützte Rabattverhandlung hätte daher einen wertvollen Kunden unter Druck setzen können, während die größte Ursache, die Expressfracht, unangetastet geblieben wäre.
 
-\subsection{Lehren aus dem Fall}
+\section{Lehren aus dem Fall}
 Die KI-Antwort war nicht vollständig falsch: Der Rabattanteil war tatsächlich gestiegen. Sie erklärte jedoch nur rund 14\,\% der untersuchten Differenz und ließ die beiden größeren Ursachen außer Acht. Die Fallstudie macht fünf Punkte deutlich:
 \begin{enumerate}
 \item Eine flüssige und plausible Antwort ist nicht gleichbedeutend mit einer vollständigen Erklärung.
@@ -135,8 +135,9 @@ Die KI-Antwort war nicht vollständig falsch: Der Rabattanteil war tatsächlich 
 \item Als Hinweis war die Beobachtung zur Rabattentwicklung dennoch nützlich. Gefährlich wäre erst, sie als abschließende Gesamterklärung zu behandeln.
 \end{enumerate}
 Für eine erste, informelle Auffälligkeit kann ein erklärter Anteil von 14\,\% ein Anlass zur weiteren Prüfung sein. Für eine Handlungsempfehlung, die einen Kunden mit 2{,}0\,Mio.\,€ Umsatz betrifft, ist die Erklärung offenkundig unzureichend. Das Netz war somit nicht allgemein „schlecht“, sondern für diese konkrete Frage und diesen Verwendungszweck nicht ausreichend.
+Die Forderung nach angemessen kalibriertem Vertrauen statt blinder Übernahme entspricht etablierten Befunden zur Mensch-Automation-Interaktion und zu Human-AI-Systemen \cite{leesee04,parasuraman97,amershi19}.
 
-\section{Formales Modell des Datennetzes}\label{sec:formal}
+\chapter{Formales Modell des Datennetzes}\label{sec:formal}
 Wir modellieren die Unternehmensdatenlandschaft als gerichteten multigraphischen Datenraum und definieren Data Products als wohldefinierte Subnetze mit Metadaten.
 
 \begin{definition}[Daten-Netzwerk]
@@ -147,16 +148,18 @@ Sei $G=(V,E)$ ein gerichteter Multigraph, wobei Knoten $v\in V$ Datentische, Dat
 Ein \emph{Data Product} $P$ ist ein Tupel $(V_P,E_P,\mathcal M,\ell)$ mit Teilmenge $V_P\subseteq V$, $E_P\subseteq E$, einer semantischen Beschreibung $\mathcal M$ (Meaning: Definitionen, Synonyme, Regeln) und einem Label $\ell$ (Owner, Quality, Frequency, Version). $P$ ist \emph{geschlossen} in dem Sinne, dass alle Kanten für die relevanten Aggregationen innerhalb $P$ definiert sind oder durch referenzielle Metadaten nachweisbar verbunden werden können.
 \end{definition}
 
-Die KI-Anwendung ist ein Algorithmus $\mathcal A$ der auf Queries $q$ und Zugang zu einem (Teil-)Netz $G'$ eine Antwort $\hat y=\mathcal A(q;G')$ liefert. Die Wahrheit (ground truth) zu einer Frage ist eine Funktion $y^*=f_q(G_{true})$ über das (hypothetisch) vollständige Datennetz $G_{true}$. In der Praxis ist $G'\subseteq G_{true}$.
+Die KI-Anwendung ist ein Algorithmus $\mathcal A$ der auf Queries $q$ und Zugang zu einem (Teil-)Netz $G'$ eine Antwort $\hat y=\mathcal A(q;G')$ liefert. Die Wahrheit (ground truth) zu einer Frage ist eine Funktion $y^*=f_q(G_{true})$ über das (hypothetisch) vollständige Datennetz $G_{true}$. In der Praxis ist $G'\subseteq G_{true}$. Für verteilte und interoperable Datenräume sind gemeinsame Begriffe und Austauschregeln zentrale Voraussetzungen \cite{nistbdif19,ottojarke19}.
 
 \begin{definition}[Provenance]
 Zur Antwort $\hat y$ liefert das System eine Provenance-Menge $\Pi(\hat y)$ bestehend aus: (i) referenzierten Data Products/Tabellen, (ii) Versionen und Zeitstempel, (iii) definitorischen Regeln aus $\mathcal M$ die angewendet wurden.
 \end{definition}
+Die Nachvollziehbarkeit solcher Herkunftsbeziehungen entspricht dem Zweck von Provenance-Standards; die FAIR-Prinzipien ergänzen dies um Auffindbarkeit, Interoperabilität und Wiederverwendbarkeit von Daten \cite{provo13,fair16,datasheets21}.
 
-\subsection{Einflussgrößen und beobachtbare Variablen}
+\section{Einflussgrößen und beobachtbare Variablen}
 Für eine Frage $q$ definiert ein Domänenexperte die Menge der \emph{wesentlichen Einflussgrößen} $S_q=\{s_1,\dots,s_k\}$, die die Antwort beeinflussen (z. B. Discount, Freight, ProductGroup). Jede $s_i$ ist eine Funktion auf Knoten/Attributen des Netzes: $s_i=\phi_i(G_{true})$. In $G'$ sind nur Submengen $\tilde S_q$ beobachtbar.
+Wenn Einflussgrößen kausal statt nur korrelativ interpretiert werden sollen, sind explizite Annahmen und ein geeignetes Kausalmodell erforderlich \cite{pearl09,hernan20}.
 
-\section{Fehlerzusammensetzung und Gut genug}
+\chapter{Fehlerzusammensetzung und gut genug}
 \label{sec:error}
 Wir wollen für eine konkrete Entscheidung die zulässige Fehlergrösse analysieren.
 
@@ -188,8 +191,9 @@ Setze $B_{miss}=-\sum_{i\in S_q\setminus\tilde S_q}\alpha_i s_i$, $\eta=\tilde\x
 \end{proof}
 
 Damit ist die Kernaufgabe: Für gegebene Stakes $W$ schätzen, wie groß $|B_{miss}|+|B_{def}|+\mathrm{std}(\eta)$ werden darf.
+Die Wahl einer Entscheidungsschwelle unter Unsicherheit knüpft an die klassische Entscheidungstheorie an; bei gemessenen Größen sind außerdem Unsicherheitsfortpflanzung und die Folgen der Annahmeregel zu berücksichtigen \cite{gum08,jcg10612,raiffa68,keeneyraiffa76}.
 
-\subsection{Gut genug als ökonomische Bedingung}
+\section{Gut genug als ökonomische Bedingung}
 \begin{satz}[Ökonomische Gut-Genug-Bedingung]
 Die KI-Antwort ist für eine Entscheidung mit Stakes $W$ "gut genug" genau dann, wenn die erwartete monetäre Auswirkung des Fehlers kleiner ist als das Error Budget, d. h.
 \[
@@ -204,9 +208,9 @@ c\,\E[|B_{miss}+B_{def}+\eta|] \le \varepsilon W.
 Direkt aus Definition des Loss und Error Budget.
 \end{proof}
 
-Diese Bedingung ist operationalisierbar: Man misst erklärten Anteil (explained share) auf Testfragen mit bekannter Referenz und vergleicht mit akzeptiertem Anteil.
+Diese Bedingung ist operationalisierbar: Man misst erklärten Anteil (explained share) auf Testfragen mit bekannter Referenz und vergleicht mit akzeptiertem Anteil. Der zusätzliche Informationswert einer Beobachtung lässt sich im Grundsatz als ihr erwarteter Beitrag zu einer besseren Entscheidung verstehen \cite{howard66}.
 
-\subsection{Vertrauensstufen und Fehlerbudget}
+\section{Vertrauensstufen und Fehlerbudget}
 Ein Error Budget macht die zulässige Abweichung für einen Anwendungsfall explizit. Es ist keine globale Qualitätsnote für ein Data Product: Dieselben Daten können für eine explorative Trendfrage genügen und für einen Eingriff in einen wichtigen Kundenvertrag unzureichend sein. Entscheidend sind der Zweck, die mögliche Schadenshöhe, die menschliche Aufsicht und die Messbarkeit des Fehlers.
 
 \begin{table}[htbp]
@@ -226,9 +230,9 @@ Ein Error Budget macht die zulässige Abweichung für einen Anwendungsfall expli
 \end{tabular}
 \end{table}
 
-Organisationen müssen nicht mit der höchsten Stufe beginnen. Hinweise und Gegenprüfungen können früh Nutzen bringen, während Testabdeckung, Datenverknüpfungen und Governance schrittweise verbessert werden. Eine höhere Stufe setzt einen belegbaren Reifegrad voraus; sie folgt nicht automatisch daraus, dass die vorherige Stufe eine Zeit lang funktioniert hat.
+Organisationen müssen nicht mit der höchsten Stufe beginnen. Hinweise und Gegenprüfungen können früh Nutzen bringen, während Testabdeckung, Datenverknüpfungen und Governance schrittweise verbessert werden. Eine höhere Stufe setzt einen belegbaren Reifegrad voraus; sie folgt nicht automatisch daraus, dass die vorherige Stufe eine Zeit lang funktioniert hat. Die strukturierte Dokumentation von Zweck, Leistungsbewertung und Grenzen eines Modells ergänzt dabei die Dokumentation der zugrunde liegenden Daten \cite{modelcards19}.
 
-\subsection{Stake-bezogene Anforderungen}
+\section{Stake-bezogene Anforderungen}
 Die nachfolgende Einordnung ist eine Entscheidungshilfe, keine allgemeingültige numerische Norm. Die verantwortliche Person muss Fehlermaß, Referenz und akzeptable Schwelle für jeden konkreten Anwendungsfall festlegen.
 
 \begin{table}[htbp]
@@ -248,17 +252,17 @@ Automatisch eine Aufgabe oder Maßnahme auslösen & Sehr hoch, gegebenenfalls oh
 \end{tabular}
 \end{table}
 
-Für den Fall aus Abschnitt~\ref{sec:case-study} ist daher zwischen einer explorativen Frage und der Empfehlung „Was sollen wir tun?“ zu unterscheiden. Die erste kann eine unvollständige Antwort als Suchhinweis verwenden; die zweite verlangt Abdeckung der entscheidenden Treiber und eine Prüfung möglicher Nebenwirkungen. Ein einfacher Maßstab ist, den auf Testfällen belegten Anteil des Effekts der konkreten Entscheidung gegenüberzustellen und zu fragen, ob die nicht erklärte Restgröße noch zu groß ist.
+Für den Fall aus Kapitel~\ref{sec:case-study} ist daher zwischen einer explorativen Frage und der Empfehlung „Was sollen wir tun?“ zu unterscheiden. Die erste kann eine unvollständige Antwort als Suchhinweis verwenden; die zweite verlangt Abdeckung der entscheidenden Treiber und eine Prüfung möglicher Nebenwirkungen. Ein einfacher Maßstab ist, den auf Testfällen belegten Anteil des Effekts der konkreten Entscheidung gegenüberzustellen und zu fragen, ob die nicht erklärte Restgröße noch zu groß ist.
 
-\section{Abweichungen als Chance}\label{sec:opportunity}
-Die besondere These dieser Arbeit: Eine Abweichung zwischen AI-Antwort und interner Analyse kann ein Indikator sein, der Information liefert und damit eine \emph{Chance} darstellt.
+\chapter{Abweichungen als Chance}\label{sec:opportunity}
+Die besondere These dieser Arbeit: Eine Abweichung zwischen AI-Antwort und interner Analyse kann ein Indikator sein, der Information liefert und damit eine \emph{Chance} darstellt. Der Wert zusätzlicher Information hängt davon ab, ob sie die Auswahl einer Handlung unter Unsicherheit tatsächlich verbessern kann \cite{howard66,raiffa68}.
 
-\subsection{KI als Hinweis und Gegenprüfung}
+\section{KI als Hinweis und Gegenprüfung}
 Ein Hinweis ist kein Urteil. Der Nutzen einer KI-Antwort kann darin liegen, eine bislang übersehene Richtung oder Auffälligkeit kenntlich zu machen, die anschließend fachlich geprüft wird. Im Margenbeispiel war der Anstieg der Rabattquote ein wahrer und prüfenswerter Hinweis, obwohl er nur einen kleinen Teil des gesamten Abstands erklärte.
 
 Als Gegenprüfung wird die KI-Antwort mit der eigenen Strategie, Erfahrung oder Controlling-Analyse verglichen. Stimmen die Ergebnisse überein, kann das die Sicherheit in beiden Analysen erhöhen. Weichen sie voneinander ab, ist die Differenz ein Anlass, die Ursachen in Daten, Verknüpfungen und Definitionen zu untersuchen. Der Vergleich kann zugleich zeigen, dass die KI zusätzliche Aspekte gefunden hat, die in der bisherigen Unternehmensanalyse fehlten.
 
-\subsection{Formalisierung als diagnostisches Signal}
+\section{Formalisierung als diagnostisches Signal}
 Wir modellieren die Situation probabilistisch. Sei $H_0$ die Hypothese "Kein fehlender Treiber" (\(S_q = \tilde S_q\) und Definitionsgleichheit) und $H_1$ die Alternative "Es fehlt mindestens ein Treiber oder Definitionskonflikt".
 
 Die KI erzeugt eine Antwort $\hat y$. Der interne Controlling-Wert (Referenz) ist $y_c$ (menschliche Analyse). Beobachte die Abweichung $d=\hat y-y_c$.
@@ -278,7 +282,7 @@ Bayessches Theorem.
 In Worten: Wenn eine bestimmte Abweichung unter \(H_0\) unwahrscheinlicher als unter \(H_1\) ist, verschiebt sie die Einschätzung in Richtung fehlender Treiber oder Definitionskonflikte. Das ist ein diagnostischer Hinweis, aber kein Beweis: Auch eine fehlerhafte eigene Analyse, ein abweichender Datenstand oder eine andere zulässige Abgrenzung kann die Differenz erklären.
 \end{bemerkung}
 
-\subsection{Abweichungen systematisch diagnostizieren}
+\section{Abweichungen systematisch diagnostizieren}
 Die Abweichung sollte nicht vorschnell dem Modell angelastet werden. Stattdessen werden Ursachen geprüft und jeweils mit einer konkreten Reaktion verknüpft:
 \begin{table}[htbp]
 \centering
@@ -299,7 +303,7 @@ Unvollständige eigene Analyse & KI macht einen zuvor übersehenen Treiber sicht
 \end{table}
 Die Gegenprüfung funktioniert somit in beide Richtungen: Sie kann Mängel im Datennetz aufdecken und zugleich die Annahmen oder Berechnungen des Unternehmens in Frage stellen.
 
-\subsection{Konkretes Lern-Loop-Modell}
+\section{Konkretes Lern-Loop-Modell}
 Sei $\theta$ ein latenter Zustand des Datennetzes (zum Beispiel, welche Quellen verknüpft sind). Vor der Beobachtung hat das Unternehmen einen Prior $\pi_0(\theta)$. Eine Abweichung $d$ liefert die Likelihood $p(d\mid\theta)$ und damit den Posterior $\pi_1(\theta)\propto p(d\mid\theta)\pi_0(\theta)$. Die Wahrscheinlichkeit von Zuständen mit fehlenden Verknüpfungen kann dadurch steigen; sie muss aber nicht für jede Abweichung steigen. Der praktische Lernkreislauf lautet:
 \begin{enumerate}
 \item Eine fachlich konkrete Frage an die KI stellen.
@@ -323,15 +327,15 @@ Kostennutzen-Argument; Standard in VOI-Theorie.
 
 Damit ist klar: Eine Abweichung kann (und soll) ökonomisch als Diagnose genutzt werden. Sie ist nicht nur ein Fehler: sie zeigt, wo Investitionen in Daten den größten Margennutzen liefern.
 
-\section{Das Data Product als gemeinsame Grundlage}
+\chapter{Das Data Product als gemeinsame Grundlage}
 \label{sec:data-product}
 
 Das Data Product ist die im Webinar vorgeschlagene Antwort auf die Frage, wo fachliches Wissen, relevante Daten und ihre Verbindungen so abgelegt werden, dass Menschen und KI sie wiederverwenden können. Es bündelt Daten, Bedeutung und ein Nutzungslabel. Im Beispiel könnte ein Data Product „Sales Result 360“ Fragen zu Umsatz, Marge und deren Einflussfaktoren beantworten.
 
-\subsection{Daten und Granularität}
+\section{Daten und Granularität}
 Im Zentrum stehen Auftragspositionen mit Umsatz, Herstellkosten, Rabatt und Menge. Die Granularität muss ausdrücklich festgelegt werden, beispielsweise „eine Zeile entspricht einer Auftragsposition“. Daran werden Kunden-, Produkt-, Zeit- und Vertriebsdimensionen sowie Fracht je Lieferung, Planwerte und Vorjahreswerte angeschlossen. Relevante Dokumente, etwa Rahmenvereinbarungen im PDF-Format, können über identifizierbare Referenzen ergänzt werden. Die Verknüpfung ist entscheidend: Ein Frachtdatensatz ohne Beziehung zur verursachenden Lieferung ist für eine Auftragsmargenfrage nur eingeschränkt nützlich.
 
-\subsection{Bedeutung und Regeln}
+\section{Bedeutung und Regeln}
 Der semantische Teil beschreibt nicht nur Spaltennamen, sondern legt fest, wie Kennzahlen zu interpretieren und zu vergleichen sind.
 \begin{table}[htbp]
 \centering
@@ -352,17 +356,17 @@ Vergleiche & Vorjahres- und Planvergleich verwenden jeweils dokumentierte Zeitr�
 \end{table}
 Eine dokumentierte Regel zur Zuordnung von Expressfracht würde im Fallbeispiel helfen, die 230\,T€ als Kosten der betroffenen Aufträge sichtbar zu machen. Semantik ersetzt dabei keine belastbare Verknüpfung der Quelldaten; beide Voraussetzungen müssen erfüllt sein.
 
-\subsection{Label und Wiederverwendung}
+\section{Label und Wiederverwendung}
 Das Label macht Nutzungsvoraussetzungen und Grenzen sichtbar. Ein Beispiel enthält einen benannten fachlichen Kontakt, die Vollständigkeit kritischer Attribute (etwa Produktgruppe mindestens 99\,\%, täglich geprüft), Aktualisierungszusagen (etwa täglich für Vertrieb und wöchentlich für Fracht), rollenbasierten Zugriff einschließlich KI-Zugriff (beispielsweise über MCP), eine Versionsnummer wie 1.2 sowie einen Prozess zur Ankündigung von Änderungen. Ergänzend sollten Datenstand, bekannte Einschränkungen und Zugriffsbedingungen maschinenlesbar dokumentiert sein.
 
-Ein einmal aufgebautes Data Product kann mehreren Anwendungen dienen: Controlling kann etwa mit Qlik Answers oder Copilot in Power BI nach Ursachen einer monatlichen DB-II-Veränderung fragen, das Management in Teams nach Frachtkostentrends und der Vertrieb nach Kunden mit hohem Umsatz bei geringer Marge. Ein Agent kann – beispielsweise über MCP und nur im freigegebenen Rahmen – ungewöhnliche Aufträge suchen und mögliche Ursachen erläutern. Gemeinsame Definitionen, Rechte und Protokollierung vermeiden, dass jede Anwendung dieselbe Geschäftslogik neu aufbaut oder abweichend interpretiert. Der Aufwand für verlässliche Verknüpfungen wird so einmal investiert und kann in mehreren Anwendungen Nutzen stiften.
+Ein  Controlling kann etwa mit Qlik Answers oder Copilot in Power BI nach Ursachen einer monatlichen DB-II-Veränderung fragen, das Management in Teams nach Frachtkostentrends und der Vertrieb nach Kunden mit hohem Umsatz bei geringer Marge. Ein Agent kann – beispielsweise über MCP und nur im freigegebenen Rahmen – ungewöhnliche Aufträge suchen und mögliche Ursachen erläutern. Gemeinsame Definitionen, Rechte und Protokollierung vermeiden, dass jede Anwendung dieselbe Geschäftslogik neu aufbaut oder abweichend interpretiert. Der Aufwand für verlässliche Verknüpfungen wird so einmal investiert und kann in mehreren Anwendungen Nutzen stiften.
 
 \begin{quote}
 \textbf{Faustregel:} ein Geschäftsbereich, eine Granularität, ein verantwortlicher Owner, viele Fragestellungen.
 \end{quote}
-Ein eng umrissenes Data Product mit wenigen zentralen Treibern ist meist ein besserer Startpunkt als der Versuch, sofort ein unternehmensweit vollständiges Modell zu bauen.
+Ein eng umrissenes Data Product mit wenigen zentralen Treibern ist meist ein besserer Startpunkt als der Versuch, sofort ein unternehmensweit vollständiges Modell zu bauen. Data-Mesh-Ansätze beschreiben verwandte Prinzipien wie domäneneigene Datenprodukte und föderierte Governance; etablierte Datenmanagement-Leitfäden behandeln dazugehörige Aufgabenbereiche systematisch \cite{dehghani22,dama17}.
 
-\section{Verantwortung und Freigabe}
+\chapter{Verantwortung und Freigabe}
 \label{sec:practice}
 
 Für einen verantwortbaren Go-live braucht es drei explizit benannte Zuständigkeiten. Die Rollen können in kleineren Unternehmen von derselben Person wahrgenommen werden; die Entscheidungen und Verantwortungsbereiche müssen trotzdem klar dokumentiert sein.
@@ -383,9 +387,9 @@ Use-Case Owner & Genehmigt den KI-Einsatz, verantwortet Testfragen und Error Bud
 \end{tabular}
 \end{table}
 
-Ohne Data Owner können verschiedene Werkzeuge unter „Marge“ unterschiedliche Kennzahlen verstehen. Ohne Data Product Owner bleiben ausgefallene oder verspätete Datenlieferungen womöglich unbemerkt. Ohne Use-Case Owner sind weder Testumfang noch Autonomiegrenzen eindeutig. Wenn sich für eine dieser Fragen keine verantwortliche Person benennen lässt, ist die Freigabe des Anwendungsfalls zurückzustellen.
+Ohne Data Owner können verschiedene Werkzeuge unter „Marge“ unterschiedliche Kennzahlen verstehen. Ohne Data Product Owner bleiben ausgefallene oder verspätete Datenlieferungen womöglich unbemerkt. Ohne Use-Case Owner sind weder Testumfang noch Autonomiegrenzen eindeutig. Wenn sich für eine dieser Fragen keine verantwortliche Person benennen lässt, ist die Freigabe des Anwendungsfalls zurückzustellen. Die Zuordnung von Entscheidungsrechten und Verantwortlichkeit ist ein zentrales Thema der Forschung zu Data Governance \cite{abraham19,khatribrown10,otto11}.
 
-\section{Schrittweises Vorgehen in der Praxis}
+\chapter{Schrittweises Vorgehen in der Praxis}
 \label{sec:implementation}
 
 Ein praktikabler Aufbau beginnt mit einer geschäftlich wichtigen, aber begrenzten Frage und erweitert Netz und Nutzung erst anhand von Beobachtungen:
@@ -401,7 +405,7 @@ Ein praktikabler Aufbau beginnt mit einer geschäftlich wichtigen, aber begrenzt
 \item \textbf{Regelmäßig nachjustieren:} Datenqualität, Aktualisierung, Definitionen und Testfragen werden erneut geprüft. Änderungen am Data Product werden versioniert und angekündigt.
 \end{enumerate}
 
-\subsection{Mittelstand und Großunternehmen}
+\section{Mittelstand und Großunternehmen}
 Das wirtschaftliche Prinzip bleibt gleich; Umfang und Governance unterscheiden sich.
 \begin{table}[htbp]
 \centering
@@ -425,7 +429,7 @@ Im Mittelstand sollte der Einstieg von der wichtigsten Geschäftsfrage ausgehen,
 
 Großunternehmen schneiden Data Products sinnvollerweise nach Geschäftsdomänen und fachlicher Granularität statt nur nach Technologie. Definitionen zwischen Bereichen müssen früh harmonisiert oder mit eindeutigem Geltungsbereich dokumentiert werden. Wiederverwendung bestehender Produkte wird zum Standard; Rechte und Protokolle gelten auch für KI-Agenten. Ein höheres Autonomieniveau wird für jeden Anwendungsfall anhand seiner Stakes und Testergebnisse separat freigegeben.
 
-\section{Typische Stolperfallen}
+\chapter{Typische Stolperfallen}
 \label{sec:pitfalls}
 
 \begin{table}[htbp]
@@ -449,7 +453,7 @@ Autonomie zu früh erhöhen & Unvollständige Informationen lösen Maßnahmen oh
 \end{tabular}
 \end{table}
 
-\section{Fortschritt messen}
+\chapter{Fortschritt messen}
 \label{sec:metrics}
 
 Die Frage, ob ein Datennetz besser wird, braucht Messgrößen, die sowohl Datenzustand als auch tatsächlichen Anwendungserfolg erfassen. Einzelne Qualitätswerte ersetzen dabei keine Überprüfung der wirtschaftlich relevanten Treiber.
@@ -476,7 +480,7 @@ Wiederverwendung & Wie viele Anwendungen nutzen dieselbe freigegebene Daten- und
 
 Der erklärte Anteil ist eine nützliche Kennzahl, aber kein universeller Qualitätsbeweis: Ein hoher Wert in einem kleinen oder wenig repräsentativen Testsatz garantiert keine Sicherheit bei einer anderen Entscheidung. Deshalb müssen Testfälle nach Stakes gewichtet, regelmäßig aktualisiert und um typische Abweichungen ergänzt werden. Ein Netz ist für einen Anwendungsfall dann gut genug, wenn die relevanten Kennzahlen die für diesen Fall festgelegten Anforderungen erfüllen.
 
-\subsection{Testfragen und erklärte Abdeckung}
+\section{Testfragen und erklärte Abdeckung}
 Sei $T=\{(q_j,y_j^*)\}_{j=1}^n$ eine Menge repräsentativer Testfragen mit fachlich geprüften Referenzwerten. Für eine Fehlertoleranz $\delta_j$ und eine ökonomische Gewichtung $w_j\geq 0$ lässt sich die gewichtete Bestehensquote definieren als
 \[
 \mathrm{Bestehensquote}
@@ -485,7 +489,7 @@ Sei $T=\{(q_j,y_j^*)\}_{j=1}^n$ eine Menge repräsentativer Testfragen mit fachl
 \]
 Dabei bezeichnet $\mathbf{1}[\cdot]$ die Indikatorfunktion. Für Ursachenanalysen sollte zusätzlich der erklärte Anteil am bekannten Gesamteffekt ausgewiesen werden. Beide Kennzahlen beantworten verschiedene Fragen: Besteht die Antwort einen Toleranztest, und deckt sie die wesentlichen Ursachen ab? Die Referenzen und Toleranzen verantwortet der Use-Case Owner gemeinsam mit den fachlich zuständigen Personen.
 
-\section{Checkliste: Ist diese KI-Antwort vertrauens\-würdig?}
+\chapter{Checkliste: Ist diese KI-Antwort vertrauens\-würdig?}
 \label{sec:checklist}
 
 Vor der Verwendung einer KI-Antwort sollten mindestens die folgenden Punkte geprüft und für den konkreten Einsatzfall beantwortet werden:
@@ -501,12 +505,12 @@ Vor der Verwendung einer KI-Antwort sollten mindestens die folgenden Punkte gepr
 \end{enumerate}
 Ein fehlender Nachweis ist selbst ein relevantes Ergebnis: Er bedeutet nicht automatisch, dass die Antwort falsch ist, aber dass sie nicht ohne weitere Prüfung für eine höher riskante Verwendung freigegeben werden sollte.
 
-\section{Experimentelle Auswertung des ausführbaren Modells}
+\chapter{Experimentelle Auswertung des ausführbaren Modells}
 \label{sec:experiment}
 
-Die bisherigen Abschnitte entwickeln das Modell analytisch. Dieser Abschnitt prüft, ob die zugehörige Implementierung (Verzeichnis \texttt{src/}) die Zahlen der Fallstudie exakt reproduziert, ob die ökonomische Auswahl von Datenintegrationen (VOI-Bedingung, Abschnitt~\ref{sec:opportunity}) korrekt und mit vertretbarem Aufwand berechnet wird, und welche Aussagen daraus für die Praxis folgen. Alle Experimente sind deterministisch, mit festen Zufallssaaten und einem Protokoll aus Konfiguration, Eingaben, Versionen und Fingerabdruck dokumentiert.
+Die bisherigen Kapitel entwickeln das Modell analytisch. Dieser Kapitel prüft, ob die zugehörige Implementierung (Verzeichnis \texttt{src/}) die Zahlen der Fallstudie exakt reproduziert, ob die ökonomische Auswahl von Datenintegrationen (VOI-Bedingung, Kapitel~\ref{sec:opportunity}) korrekt und mit vertretbarem Aufwand berechnet wird, und welche Aussagen daraus für die Praxis folgen. Alle Experimente sind deterministisch, mit festen Zufallssaaten und einem Protokoll aus Konfiguration, Eingaben, Versionen und Fingerabdruck dokumentiert.
 
-\subsection{Fragestellungen}
+\section{Fragestellungen}
 \begin{description}[style=nextline]
 \item[E1 -- Reproduktion der Fallstudie.] Liefert die exakte Rechnung (rationale Arithmetik) die Werte aus Tabelle~\ref{tab:margin-case}, insbesondere den erklärten Anteil von etwa 14\,\%?
 \item[E2 -- Budgetabhängigkeit der Integrationsauswahl.] Welche Quellen sollten bei welchem Integrationsbudget angebunden werden, und stimmt das Ergebnis des SAT-basierten Entscheiders mit einer vollständigen Aufzählung überein?
@@ -515,8 +519,8 @@ Die bisherigen Abschnitte entwickeln das Modell analytisch. Dieser Abschnitt pr�
 \item[E5 -- Reproduzierbarkeit.] Liefern wiederholte Läufe bitgleiche Ergebnisprotokolle mit gleichem Fingerabdruck?
 \end{description}
 
-\subsection{Versuchsaufbau}
-\subsubsection{Hardware und Software}
+\section{Versuchsaufbau}
+\subsection{Hardware und Software}
 Alle Messungen wurden in einer virtuellen Maschine (KVM, Vollvirtualisierung) in einer Cloud-Umgebung ausgeführt, nicht auf dediziert zugewiesener Hardware. Tabelle~\ref{tab:hardware} fasst die Umgebung zusammen. Eine GPU wurde weder benötigt noch verwendet; alle Berechnungen laufen in reinem Python auf einem einzelnen Prozess.
 
 \begin{table}[htbp]
@@ -541,33 +545,33 @@ Testwerkzeug & pytest 9.1.1 \\
 \end{tabular}
 \end{table}
 
-Der Prozessortyp wird in der virtuellen Maschine nur allgemein als „Intel Xeon Processor @ 2.10GHz“ gemeldet; eine genauere Modellbezeichnung stand nicht zur Verfügung. Die Taktfrequenz ist ein Nennwert, die tatsächliche Frequenz unter Last wurde nicht gemessen. Da sich der Host mit anderen Mandanten teilt, sind Laufzeiten mit Streuung durch Fremdlast zu rechnen (siehe Abschnitt~\ref{sec:exp-grenzen}).
+Der Prozessortyp wird in der virtuellen Maschine nur allgemein als „Intel Xeon Processor @ 2.10GHz“ gemeldet; eine genauere Modellbezeichnung stand nicht zur Verfügung. Die Taktfrequenz ist ein Nennwert, die tatsächliche Frequenz unter Last wurde nicht gemessen. Da sich der Host mit anderen Mandanten teilt, sind Laufzeiten mit Streuung durch Fremdlast zu rechnen (siehe Kapitel~\ref{sec:exp-grenzen}).
 
-\subsubsection{Software-Verifikation vor den Experimenten}
+\subsection{Software-Verifikation vor den Experimenten}
 Vor den Experimenten wurde die vollständige Testsuite des Projekts ausgeführt. Alle 72 Tests bestanden im ersten Durchlauf; die Gesamtlaufzeit betrug etwa 2{,}3 bis 2{,}6\,s. Dabei wurde die Abdeckungsmessung (\texttt{pytest-cov}) nicht ausgeführt, weil das Paket in der Umgebung nicht installiert werden konnte. Das Referenzprojekt wurde per Git bezogen und über den Importpfad eingebunden, nicht per \texttt{pip} installiert. Folglich ist die Version des Referenzprojekts im Experimentprotokoll manuell als Git-Stand eingetragen.
 
-\subsubsection{Modellierung der Integrationsentscheidung}
+\subsection{Modellierung der Integrationsentscheidung}
 Die Auswahl der anzubindenden Quellen folgt der VOI-Bedingung $\E_{\pi_1}[\Delta W]\ge C_{int}$, erweitert um Abhängigkeiten zwischen Quellen und ein Gesamtbudget $B$. Jede Option $i$ hat einen Nutzen $g_i$, Kosten $c_i$ (ganzzahlig, in T€) und eine Menge benötigter Optionen. Gesucht wird die Auswahl $S$ mit maximalem Nettonutzen
 \[
 \max_{S}\ \sum_{i\in S}(g_i-c_i)\quad\text{unter}\quad \sum_{i\in S}c_i\le B,\quad i\in S\Rightarrow \mathrm{req}(i)\subseteq S .
 \]
-Die leere Auswahl ist stets zulässig, der Nettonutzen daher nie negativ. Die Umsetzung kodiert dies als Optimierungsproblem über einem Schaltkreis aus Bits $x_i$ („Quelle $i$ wird integriert“), Abhängigkeiten als Klauseln $(\lnot x_i\lor x_r)$ und das Budget als Vergleicher auf der Kostensumme. Der Optimierer fragt einen SAT-Entscheider (DPLL-Verfahren des Referenzprojekts) wiederholt, ob ein Wert mindestens $v$ erreichbar ist; die Zahl dieser Entscheideraufrufe wird als \emph{Aufrufe} berichtet.
+Die leere Auswahl ist stets zulässig, der Nettonutzen daher nie negativ. Die Umsetzung kodiert dies als Optimierungsproblem über einem Schaltkreis aus Bits $x_i$ („Quelle $i$ wird integriert“), Abhängigkeiten als Klauseln $(\lnot x_i\lor x_r)$ und das Budget als Vergleicher auf der Kostensumme. Der Optimierer fragt einen SAT-Entscheider (DPLL-Verfahren des Referenzprojekts) wiederholt, ob ein Wert mindestens $v$ erreichbar ist; die Zahl dieser Entscheideraufrufe wird als \emph{Aufrufe} berichtet. Für die Formulierung diskreter Investitionsentscheidungen und ihre exakte Optimierung bietet die Literatur zu ganzzahliger Optimierung grundlegende und algorithmische Referenzen \cite{wolsey98,achterberg09}.
 
-\paragraph{Instanz der Fallstudie (E2, E4).} Die Nutzen entsprechen den Beträgen der Ursachen aus Tabelle~\ref{tab:margin-case}: Die Anbindung der Frachtzuordnung macht 230\,T€, die der Produktgruppe 150\,T€ sichtbar. \textbf{Die Kosten und Abhängigkeiten sind Annahmen dieses Experiments und stammen nicht aus der Fallstudie}: Frachtzuordnung 80\,T€; Produktgruppe 60\,T€, die ein Stammdaten-Mapping (40\,T€, eigener Nutzen 0) voraussetzt; Rabatt-Feindaten 30\,T€ (Nutzen 0, da der Rabattanteil bereits sichtbar ist).
+\subsubsection{Instanz der Fallstudie (E2, E4).} Die Nutzen entsprechen den Beträgen der Ursachen aus Tabelle~\ref{tab:margin-case}: Die Anbindung der Frachtzuordnung macht 230\,T€, die der Produktgruppe 150\,T€ sichtbar. \textbf{Die Kosten und Abhängigkeiten sind Annahmen dieses Experiments und stammen nicht aus der Fallstudie}: Frachtzuordnung 80\,T€; Produktgruppe 60\,T€, die ein Stammdaten-Mapping (40\,T€, eigener Nutzen 0) voraussetzt; Rabatt-Feindaten 30\,T€ (Nutzen 0, da der Rabattanteil bereits sichtbar ist).
 
-\paragraph{Zufallsinstanzen (E3).} Für $n=4,\dots,10$ Optionen werden je drei Instanzen mit festen Saaten erzeugt: Nutzen gleichverteilt in $\{0,\dots,100\}$, Kosten in $\{1,\dots,60\}$, mit Wahrscheinlichkeit $0{,}2$ eine Abhängigkeit von einer zufällig gewählten früheren Option; das Budget beträgt $\lfloor 0{,}4\sum_i c_i\rfloor$. Als exakte Referenz dient die Aufzählung aller $2^n$ Teilmengen.
+\subsubsection{Zufallsinstanzen (E3).} Für $n=4,\dots,10$ Optionen werden je drei Instanzen mit festen Saaten erzeugt: Nutzen gleichverteilt in $\{0,\dots,100\}$, Kosten in $\{1,\dots,60\}$, mit Wahrscheinlichkeit $0{,}2$ eine Abhängigkeit von einer zufällig gewählten früheren Option; das Budget beträgt $\lfloor 0{,}4\sum_i c_i\rfloor$. Als exakte Referenz dient die Aufzählung aller $2^n$ Teilmengen.
 
-\subsubsection{Messmethodik}
+\subsection{Messmethodik}
 Zeiten wurden mit \texttt{time.perf\_counter} (Wanduhrzeit) gemessen. In E2 wurde jede Budgetstufe fünfmal wiederholt und der Median berichtet; in E3 wurde jede Instanz einmal gemessen und je Größe der Median über die drei Instanzen berichtet, mit Minimum und Maximum als Streuung. Der Speicherbedarf ist der Spitzenwert des Prozesses (\texttt{ru\_maxrss}). Die Gesamtlaufzeit aller fünf Experimente betrug 14{,}9\,s bei einem Speicherspitzenwert von 21{,}4\,MiB; der Speicher ist damit für die betrachteten Größen unkritisch.
 
-\subsection{Ergebnisse und Interpretation}
+\section{Ergebnisse und Interpretation}
 
-\subsubsection{E1: Reproduktion der Fallstudie}
+\subsection{E1: Reproduktion der Fallstudie}
 Die exakte Rechnung liefert einen erwarteten DB\,II von 3\,080\,T€, einen tatsächlichen von 2\,640\,T€ und damit eine Abweichung von genau 440\,T€. Die Ursachenanteile sind $23/44$ (Expressfracht, $\approx 52{,}3\,\%$), $15/44$ (Produktmix, $\approx 34{,}1\,\%$) und $3/22$ (Rabatte, $\approx 13{,}6\,\%$). Der von der KI erklärte Anteil beträgt exakt $3/22\approx 13{,}64\,\%$.
 
 \emph{Interpretation.} Die Implementierung bestätigt die Zahlen der Arbeit; die Angabe „etwa 14\,\%“ ist eine Rundung von $13{,}64\,\%$. Da mit rationalen Zahlen gerechnet wird, treten keine Rundungsfehler auf, und die Zerlegung geht ohne Rest auf. Das ist die erwartete Konsistenzprüfung und kein neuer Befund.
 
-\subsubsection{E2: Budgetabhängigkeit der Integrationsauswahl}
+\subsection{E2: Budgetabhängigkeit der Integrationsauswahl}
 Tabelle~\ref{tab:e2} zeigt das Ergebnis für Budgets von 0 bis 200\,T€ in Schritten von 20\,T€ sowie ohne Budgetgrenze.
 
 \begin{table}[htbp]
@@ -603,7 +607,7 @@ Abbildung~\ref{fig:e2} zeigt die Treppenform. In allen 12 Budgetstufen stimmt de
 \end{enumerate}
 Die Übereinstimmung mit der Aufzählung in allen 12 Fällen stützt die Korrektheit der Kodierung (Abhängigkeitsklauseln, Budgetvergleicher, Zielfunktion) für diese Instanz. Sie ist kein Korrektheitsbeweis; E3 erweitert die Prüfung.
 
-\subsubsection{E3: Skalierung}
+\subsection{E3: Skalierung}
 Tabelle~\ref{tab:e3} zeigt Laufzeit und Entscheideraufrufe für wachsende Instanzgrößen.
 
 \begin{table}[htbp]
@@ -639,9 +643,9 @@ $n$ & \textbf{Entscheider (ms)} & \textbf{Streuung (ms)} & \textbf{Aufzählung (
 
 \emph{Vergleich mit der Aufzählung.} Die einfache Aufzählung aller Teilmengen ist in diesem Größenbereich um etwa den Faktor 700 bis 1\,100 schneller als der Entscheider. Der Entscheider ist hier somit \emph{kein} Geschwindigkeitsgewinn. Dieser Befund ist ehrlich festzuhalten: Die Kodierung als Entscheider-Problem dient der formalen Anbindung an die Entscheiderbausteine des Referenzprojekts und der Prüfbarkeit, nicht der Rechenleistung. Auch die Aufzählung wächst mit $2^n$ und ist nur ein Referenzwert für kleine $n$. Für größere Portfolios sind spezialisierte Verfahren (zum Beispiel dynamische Programmierung für das Budgetproblem mit ganzzahligen Kosten oder ein ganzzahliger Optimierer) zu bevorzugen. Eine grobe Extrapolation (nicht gemessen) mit dem Faktor $2{,}1$ je Option ergäbe für $n=20$ eine Entscheiderlaufzeit in der Größenordnung von $2{,}6\,\mathrm{s}\cdot 2{,}1^{10}\approx 1\,\mathrm{h}$; die Extrapolation ist unsicher, weil nur sieben Größen und je drei Instanzen vorliegen.
 
-\emph{Einordnung für die Praxis.} Ein Datennetz mit bis zu etwa zehn alternativen Integrationsvorhaben, wie es für ein einzelnes Data Product realistisch ist, lässt sich in Sekunden exakt optimieren. Entscheidend für die Qualität der Auswahl sind dann nicht die Rechenzeit, sondern die Schätzung von Nutzen und Kosten (siehe Abschnitt~\ref{sec:exp-grenzen}).
+\emph{Einordnung für die Praxis.} Ein Datennetz mit bis zu etwa zehn alternativen Integrationsvorhaben, wie es für ein einzelnes Data Product realistisch ist, lässt sich in Sekunden exakt optimieren. Entscheidend für die Qualität der Auswahl sind dann nicht die Rechenzeit, sondern die Schätzung von Nutzen und Kosten (siehe Kapitel~\ref{sec:exp-grenzen}).
 
-\subsubsection{E4: Erklärter Anteil bei schrittweiser Integration}
+\subsection{E4: Erklärter Anteil bei schrittweiser Integration}
 Wird angenommen, dass eine angebundene Quelle die zugehörige Ursache vollständig erklärbar macht, ergibt sich Tabelle~\ref{tab:e4}.
 
 \begin{table}[htbp]
@@ -669,14 +673,14 @@ Ausgangslage (nur Rabatte) & $3/22$ & 13{,}64 & 380 \\
 
 \emph{Interpretation.} Der erklärte Anteil steigt durch die Frachtzuordnung allein um etwa 52 Prozentpunkte; die zweite Integration schließt die verbleibenden 34 Prozentpunkte. Zusammen mit E2 lässt sich der Zusammenhang zwischen Budget und Aussagekraft ablesen: Unterhalb von 80\,T€ bleibt die Erklärung bei $13{,}6\,\%$, zwischen 80 und 180\,T€ bei $65{,}9\,\%$, ab 180\,T€ bei $100\,\%$. Für die Handlungsempfehlung der Fallstudie (Neuverhandlung mit einem Kunden mit 2{,}0\,Mio.\,€ Umsatz) wäre ein erklärter Anteil von $65{,}9\,\%$ wahrscheinlich noch zu gering, falls der Use-Case Owner ein strenges Error Budget festlegt; ein konkreter Schwellenwert wird hier bewusst nicht vorgegeben, da er fachlich zu bestimmen ist. Die Rechnung zeigt jedoch, dass die einfachste Integration (Fracht) den größten Fortschritt bringt, was mit der Rangfolge in E2 übereinstimmt.
 
-Zu beachten ist, dass die 100\,\% eine \emph{obere Schranke} unter der Annahme vollständiger Erklärbarkeit nach Anbindung sind. Tatsächlich bleiben Definitionsabweichungen und zufällige Fehler (Fehlerzerlegung, Abschnitt~\ref{sec:formal}) bestehen, sodass der reale erklärte Anteil niedriger ausfallen kann.
+Zu beachten ist, dass die 100\,\% eine \emph{obere Schranke} unter der Annahme vollständiger Erklärbarkeit nach Anbindung sind. Tatsächlich bleiben Definitionsabweichungen und zufällige Fehler (Fehlerzerlegung, Kapitel~\ref{sec:formal}) bestehen, sodass der reale erklärte Anteil niedriger ausfallen kann.
 
-\subsubsection{E5: Reproduzierbarkeit}
+\subsection{E5: Reproduzierbarkeit}
 Fünf Wiederholungen von E1 lieferten identische Ergebnisprotokolle und denselben Fingerabdruck (SHA-256, Präfix \texttt{53eccfad}). Der Fingerabdruck bindet Name, Konfiguration, Eingaben und Versionen (einschließlich der Python-Version 3.13.16 und des Git-Standes des Referenzprojekts). Er ändert sich, sobald sich eine dieser Größen ändert.
 
 \emph{Einschränkung.} Bitgleich reproduzierbar sind die rein rechnerischen Ergebnisse (E1, E4 und die Auswahlmengen in E2/E3). Die gemessenen Laufzeiten in E2 und E3 sind Teil der Ergebnisdateien, schwanken aber zwischen Läufen und sind nicht Teil des Fingerabdrucks. Wer die Laufzeiten vergleichen will, muss Hardware und Last berücksichtigen.
 
-\subsection{Zusammenfassung der Befunde}
+\section{Zusammenfassung der Befunde}
 \begin{enumerate}
 \item Die Implementierung reproduziert die Fallstudie exakt (E1). Der erklärte Anteil beträgt $3/22\approx 13{,}64\,\%$.
 \item Der SAT-basierte Entscheider liefert in allen 33 geprüften Fällen (12 Budgetstufen und 21 Zufallsinstanzen) denselben Nettonutzen wie die vollständige Aufzählung (E2, E3).
@@ -686,19 +690,19 @@ Fünf Wiederholungen von E1 lieferten identische Ergebnisprotokolle und denselbe
 \item Die rechnerischen Ergebnisse sind reproduzierbar, die Laufzeiten nicht bitgleich (E5).
 \end{enumerate}
 
-\subsection{Grenzen der Aussagekraft}
+\section{Grenzen der Aussagekraft}
 \label{sec:exp-grenzen}
 Die Ergebnisse sind sorgfältig zu lesen:
 \begin{itemize}
 \item \textbf{Illustrative Daten.} Die Beträge der Fallstudie stammen aus einem Webinar und sind keine unabhängig erhobenen Unternehmensdaten. Die Integrationskosten und die Abhängigkeit vom Stammdaten-Mapping sind eigene Annahmen. Die Treppenschwellen (80 und 180\,T€) und die Nettonutzen (150, 200) sind damit \emph{Rechenbeispiele}, keine Empfehlungen für ein konkretes Unternehmen.
 \item \textbf{Nutzen gleich Ursachenbetrag.} Der Nutzen einer Integration wurde mit dem vollen Betrag der dadurch sichtbaren Ursache gleichgesetzt. Das unterstellt, dass die Ursache nach der Anbindung vollständig vermieden oder korrigiert werden kann und dass die Posterior-Verteilung $\pi_1$ auf diesen Fall konzentriert ist. In der Praxis ist $\E_{\pi_1}[\Delta W]$ meist deutlich kleiner und selbst unsicher.
-\item \textbf{Ein Anwendungsfall.} Das Modell bewertet Integrationen nur für eine einzelne Frage. Wiederverwendung über mehrere Anwendungen (Abschnitt~\ref{sec:data-product}) erhöht den Nutzen einer Integration und wird nicht abgebildet.
+\item \textbf{Ein Anwendungsfall.} Das Modell bewertet Integrationen nur für eine einzelne Frage. Wiederverwendung über mehrere Anwendungen (Kapitel~\ref{sec:data-product}) erhöht den Nutzen einer Integration und wird nicht abgebildet.
 \item \textbf{Kleine Stichprobe.} E3 umfasst nur sieben Größen mit je drei Instanzen und eine einzige Messung je Instanz. Konfidenzintervalle wurden nicht berechnet; die Faktoraussagen sind Größenordnungen.
 \item \textbf{Messumgebung.} Die Messungen stammen aus einer geteilten virtuellen Maschine mit zwei Kernen; absolute Zeiten sind auf anderer Hardware nicht übertragbar, das exponentielle Muster dagegen schon.
 \item \textbf{Testabdeckung.} Die 72 Tests bestätigen die Funktionalität, aber die Abdeckungsmessung wurde nicht ausgeführt; die Aussage „alle Tests bestehen“ ist daher keine Aussage über den Grad der Abdeckung.
 \end{itemize}
 
-\subsection{Reproduktion}
+\section{Reproduktion}
 Die Experimente liegen als Skript \texttt{src/experiments.py} im Projekt; Ergebnisse stehen als JSON-Dateien im Verzeichnis \texttt{src/results/}, die Abbildungen (erzeugt mit \texttt{src/plots.py}) in \texttt{src/results/plots/} und als Kopie in \texttt{science/}. Nach Installation (\texttt{pip install -e ".[dev]"}) wird das Skript aus dem Projektwurzelverzeichnis mit
 \begin{quote}
 \texttt{python src/experiments.py}
@@ -706,11 +710,11 @@ Die Experimente liegen als Skript \texttt{src/experiments.py} im Projekt; Ergebn
 und anschließend mit \texttt{python src/plots.py} die Abbildungen erzeugt.
 ausgeführt. Die Gesamtlaufzeit beträgt auf der in Tabelle~\ref{tab:hardware} beschriebenen Umgebung etwa 15\,s.
 
-\section{Diskussion, Grenzen und Ausblick}
+\chapter{Diskussion, Grenzen und Ausblick}
 \label{sec:discussion}
 
-\subsection{Einordnung der Befunde}
-Die Arbeit verbindet drei Ebenen: ein begriffliches Modell (Datennetz, Data Product, Provenance, Stakes), eine ökonomische Bedingung (Error Budget, VOI) und eine ausführbare Umsetzung, die an der Fallstudie und an synthetischen Instanzen geprüft wurde (Abschnitt~\ref{sec:experiment}). Die Ebenen stützen sich gegenseitig, aber nicht gleich stark. Die Fallstudie ist illustrativ, die Experimente zeigen die \emph{interne Konsistenz} und das \emph{Rechenverhalten} des Modells, nicht seine \emph{empirische Wirksamkeit} in einem realen Unternehmen. Ein bestandener Test und eine reproduzierte Zahl belegen, dass die Formeln richtig umgesetzt sind; sie belegen nicht, dass die Annahmen hinter den Formeln in der Praxis gelten.
+\section{Einordnung der Befunde}
+Die Arbeit verbindet drei Ebenen: ein begriffliches Modell (Datennetz, Data Product, Provenance, Stakes), eine ökonomische Bedingung (Error Budget, VOI) und eine ausführbare Umsetzung, die an der Fallstudie und an synthetischen Instanzen geprüft wurde (Kapitel~\ref{sec:experiment}). Die Ebenen stützen sich gegenseitig, aber nicht gleich stark. Die Fallstudie ist illustrativ, die Experimente zeigen die \emph{interne Konsistenz} und das \emph{Rechenverhalten} des Modells, nicht seine \emph{empirische Wirksamkeit} in einem realen Unternehmen. Ein bestandener Test und eine reproduzierte Zahl belegen, dass die Formeln richtig umgesetzt sind; sie belegen nicht, dass die Annahmen hinter den Formeln in der Praxis gelten.
 
 Drei Ergebnisse der Experimente verdienen eine ausdrückliche Einordnung.
 \begin{enumerate}
@@ -720,7 +724,7 @@ Drei Ergebnisse der Experimente verdienen eine ausdrückliche Einordnung.
 \end{enumerate}
 Der erklärte Anteil der Fallstudie (E4) zeigt zudem, dass die größte Verbesserung mit der \emph{ersten} Integration entsteht: Die Anbindung der Frachtdaten allein hebt den erklärten Anteil von $13{,}6\,\%$ auf $65{,}9\,\%$. Das ist plausibel, weil der Frachtanteil der größte Posten ist; es ist jedoch ein Befund des konkreten Zahlenbeispiels und keine allgemeine Gesetzmäßigkeit abnehmender Grenzerträge.
 
-\subsection{Grenzen des Modells}
+\section{Grenzen des Modells}
 Die formalen Modelle vereinfachen reale Unternehmens\-prozesse bewusst: Einfluss\-beziehungen sind nicht immer linear, Referenzwerte können selbst unsicher sein und Ursachen interagieren. Auch die im Fallbeispiel genannten Beträge sind eine illustrative Webinar-Fallstudie und keine unabhängig erhobene Unternehmensanalyse. Die angegebenen Reife- und Fehlermaße müssen daher als fallbezogene Entscheidungshilfen verstanden werden.
 
 Eine weitere Grenze ist die Auswahl der Testfragen. Ein hoher Messwert für leicht beantwortbare oder häufige Fragen sagt wenig über seltene, aber folgenreiche Ausnahmen aus. Testsets sollten deshalb nach möglichen Auswirkungen geschichtet und auch nach Änderungen an Datenquellen, Definitionen, Modellen oder Berechtigungen erneut ausgeführt werden. Ebenso ist eine Abweichung nicht automatisch ein Beleg gegen das Datennetz: Sie kann auf einen Fehler in der internen Analyse, eine andere zulässige Definition oder einen inzwischen veränderten Datenstand hinweisen.
@@ -729,18 +733,18 @@ Aus den Experimenten kommen folgende Grenzen hinzu:
 \begin{itemize}
 \item \textbf{Annahmen statt Messungen.} Integrationskosten, die Abhängigkeit vom Stammdaten-Mapping und die Gleichsetzung von Nutzen und Ursachenbetrag sind Annahmen. Die Treppenschwellen von 80 und 180\,T€ und die Nettonutzen von 150 und 200\,T€ sind Rechenbeispiele und keine Prognose für ein Unternehmen.
 \item \textbf{Deterministische Nutzen.} Das Experiment behandelt den erwarteten Nutzen $\E_{\pi_1}[\Delta W]$ als bekannte Zahl. Tatsächlich ist dieser Wert selbst unsicher; ein Entscheider sollte Unsicherheitsbereiche und nicht nur Punktwerte verarbeiten.
-\item \textbf{Vollständige Erklärbarkeit als Obergrenze.} Der erklärte Anteil von $100\,\%$ nach beiden Integrationen setzt voraus, dass jede angebundene Quelle ihre Ursache vollständig erklärbar macht. Definitionsabweichungen und zufällige Fehler (Abschnitt~\ref{sec:error}) bleiben bestehen.
-\item \textbf{Ein Anwendungsfall.} Die Wiederverwendung eines Data Products über mehrere Anwendungen (Abschnitt~\ref{sec:data-product}) erhöht den Nutzen einer Integration, wird im Experiment aber nicht abgebildet; der Einzelfallnutzen unterschätzt daher tendenziell den Gesamtnutzen.
+\item \textbf{Vollständige Erklärbarkeit als Obergrenze.} Der erklärte Anteil von $100\,\%$ nach beiden Integrationen setzt voraus, dass jede angebundene Quelle ihre Ursache vollständig erklärbar macht. Definitionsabweichungen und zufällige Fehler (Kapitel~\ref{sec:error}) bleiben bestehen.
+\item \textbf{Ein Anwendungsfall.} Die Wiederverwendung eines Data Products über mehrere Anwendungen (Kapitel~\ref{sec:data-product}) erhöht den Nutzen einer Integration, wird im Experiment aber nicht abgebildet; der Einzelfallnutzen unterschätzt daher tendenziell den Gesamtnutzen.
 \item \textbf{Kleine Stichproben und eine Messumgebung.} Die Skalierungsmessung umfasst sieben Instanzgrößen mit je drei Instanzen, jede einmal gemessen, auf einer einzelnen geteilten virtuellen Maschine. Die Aussage „etwa Verdopplung je Option“ ist eine Größenordnung, die absoluten Zeiten gelten nur für diese Umgebung.
 \item \textbf{Keine Messung mit realen KI-Antworten.} Die Experimente rechnen mit dem Modell; sie bewerten keine tatsächlichen Antworten eines KI-Systems gegen Referenzfälle. Die Kennzahlen der Testfragen (Bestehensquote, Provenance-Abdeckung) wurden somit nur durch Einheitstests, nicht an realen Daten geprüft.
 \end{itemize}
 
 Die wirtschaftliche Logik bleibt dennoch belastbar: Datenverbesserungen sollten dort priorisiert werden, wo ihr erwarteter zusätzlicher Nutzen die Integrations- und Betriebskosten rechtfertigt. In der Praxis sind dafür kontrollierte Experimente, historische Was-wäre-wenn-Analysen und eine nachvollziehbare Messung der Folgen nötig. Die Schätzung dieses Nutzens in realen Geschäftsfällen bleibt eine zentrale offene Aufgabe.
 
-\subsection{Ausblick}
+\section{Ausblick}
 Aus den Grenzen ergeben sich konkrete Arbeitsfelder, die sich in vier Gruppen ordnen lassen: Erhebung realer Daten, Erweiterung des Modells, bessere Rechenverfahren und Betrieb in der Praxis.
 
-\subsubsection{Empirische Validierung mit realen Daten}
+\subsection{Empirische Validierung mit realen Daten}
 \begin{enumerate}
 \item \textbf{Mehrere reale Fallstudien.} Die Arbeit stützt sich auf einen illustrativen Einzelfall. Sinnvoll sind Fallstudien in mehreren Unternehmen und Branchen, in denen die DB-II-Abweichung (oder eine andere Kennzahl) tatsächlich von Controlling-Fachleuten zerlegt und mit der Antwort eines KI-Systems verglichen wird. Daraus ließen sich die Verteilung des erklärten Anteils und die typischen Ursachenklassen empirisch bestimmen, statt sie an einem Beispiel zu illustrieren.
 \item \textbf{Vorher-Nachher-Messung.} Der Kern der These ist, dass Integrationen den erklärten Anteil und damit die Verlässlichkeit erhöhen. Das ließe sich testen, indem der erklärte Anteil vor und nach einer konkreten Integration (zum Beispiel der Verknüpfung von Fracht und Auftrag) mit denselben Testfragen gemessen wird. Aussagekräftig wäre ein Vergleich mit einer Kontrollgruppe von Fragen oder Bereichen ohne Integration.
@@ -748,19 +752,19 @@ Aus den Grenzen ergeben sich konkrete Arbeitsfelder, die sich in vier Gruppen or
 \item \textbf{Schätzung von Nutzen und Kosten.} Statt angenommener Werte sind historische Was-wäre-wenn-Analysen nötig: Was hätte eine früher vorhandene Frachtverknüpfung gekostet, und welche Fehlentscheidung hätte sie vermieden? Erst damit wird die VOI-Bedingung $\E_{\pi_1}[\Delta W]\ge C_{int}$ zahlenmäßig belastbar.
 \end{enumerate}
 
-\subsubsection{Erweiterungen des Modells}
+\subsection{Erweiterungen des Modells}
 \begin{enumerate}
 \item \textbf{Unsicherheit im Nutzen.} Der Nutzen einer Integration lässt sich als Zufallsvariable modellieren. Die Auswahl könnte dann den Erwartungswert, einen Quantilswert oder eine Risikoaversion berücksichtigen; eine Sensitivitätsanalyse über Kosten und Nutzen würde zeigen, wie robust die Treppenschwellen sind und welche Annahme das Ergebnis am stärksten bestimmt.
 \item \textbf{Teilweise Erklärbarkeit.} Der Baustein für Ursachen erlaubt bereits erklärte Anteile zwischen 0 und 1. Das Experiment nutzt nur die Extremwerte. Eine Erweiterung könnte den Erklärungsgrad einer Quelle von ihrer Qualität, Aktualität und Granularität abhängig machen und damit die Verbindung zur Fehlerzerlegung (fehlende Treiber, Definitionsabweichung, Zufallsfehler) herstellen.
 \item \textbf{Mehrere Anwendungsfälle und gemeinsame Quellen.} Ein Data Product bedient mehrere Anwendungen. Das Modell sollte den Nutzen einer Integration über alle Anwendungen summieren und gemeinsame Vorleistungen nur einmal bepreisen; das würde die im Text behauptete Wiederverwendungswirkung quantifizierbar machen.
-\item \textbf{Zeitliche Abfolge und Lernen.} Integrationen erfolgen nacheinander, und jede Abweichung verändert den Posterior über den Zustand des Datennetzes (Abschnitt~\ref{sec:opportunity}). Ein dynamisches Modell würde die Reihenfolge der Integrationen und den Wert des Wartens bewerten und den Lern-Loop mit dem Bayes-Update ausdrücklich in die Auswahl einbeziehen.
+\item \textbf{Zeitliche Abfolge und Lernen.} Integrationen erfolgen nacheinander, und jede Abweichung verändert den Posterior über den Zustand des Datennetzes (Kapitel~\ref{sec:opportunity}). Ein dynamisches Modell würde die Reihenfolge der Integrationen und den Wert des Wartens bewerten und den Lern-Loop mit dem Bayes-Update ausdrücklich in die Auswahl einbeziehen.
 \item \textbf{Verbindung zur Governance.} Die Vertrauensstufen und Freigabehindernisse sind bisher getrennt vom Integrationsproblem. Man könnte untersuchen, welche Integrationen nötig sind, um eine Anwendung von Stufe~1 auf Stufe~3 zu heben, und wie sich dabei Error Budget, Stakes und Kosten verhalten.
 \end{enumerate}
 
-\subsubsection{Rechenverfahren}
+\subsection{Rechenverfahren}
 Das Auswahlproblem mit Budget enthält ohne Abhängigkeiten das Rucksackproblem und ist deshalb im Allgemeinen NP-schwer; die Experimente zeigen das exponentielle Verhalten des gewählten Entscheiders. Für größere Portfolios sind spezialisierte Verfahren naheliegend: dynamische Programmierung über ganzzahlige Kosten, ganzzahlige lineare Optimierung oder Heuristiken mit Gütegarantie. Der SAT-basierte Entscheider könnte dabei als \emph{Referenz zur Prüfung} der schnelleren Verfahren dienen, wie es die Aufzählung hier für den Entscheider tut. Eine systematische Messung mit mehr Instanzen, Wiederholungen je Instanz, Konfidenzintervallen und auf mehreren Hardware-Konfigurationen würde die Laufzeitaussagen von Größenordnungen auf belastbare Schätzungen heben.
 
-\subsubsection{Betrieb und Nachvollziehbarkeit}
+\subsection{Betrieb und Nachvollziehbarkeit}
 \begin{enumerate}
 \item \textbf{Kontinuierliche Prüfung.} Testfragen und Kennzahlen sollten als wiederkehrender Lauf im Betrieb ausgeführt werden, damit Änderungen an Quellen, Definitionen oder Modellen automatisch auffallen. Das Experimentprotokoll mit Fingerabdruck ist dafür ein Baustein; es müsste um Versionierung der Testdaten und der Referenzwerte ergänzt werden.
 \item \textbf{Reproduzierbare Umgebung.} Die Experimente wurden mit einem per Git eingebundenen Referenzprojekt und ohne Abdeckungsmessung ausgeführt. Eine festgelegte Umgebung (Container oder gesperrte Abhängigkeiten) und eine automatische Ausführung der Tests mit Abdeckungsbericht würden die Nachprüfbarkeit verbessern.
@@ -768,7 +772,7 @@ Das Auswahlproblem mit Budget enthält ohne Abhängigkeiten das Rucksackproblem 
 \item \textbf{Regulatorischer Rahmen.} Die vier Vertrauensstufen sind ein konzeptioneller Rahmen und keine Norm. Ihre Beziehung zu branchenspezifischen Anforderungen (etwa an Nachvollziehbarkeit, menschliche Aufsicht und Dokumentation) wäre getrennt zu untersuchen.
 \end{enumerate}
 
-\subsubsection{Offene Forschungsfragen}
+\subsection{Offene Forschungsfragen}
 Aus alledem ergeben sich fünf Fragen, die diese Arbeit nicht beantwortet, aber präzise formuliert:
 \begin{enumerate}
 \item Wie verteilt sich der erklärte Anteil einer KI-Antwort in realen Unternehmen vor und nach gezielten Integrationen?
@@ -778,30 +782,30 @@ Aus alledem ergeben sich fünf Fragen, die diese Arbeit nicht beantwortet, aber 
 \item Welche Rechenverfahren sind für Portfolios mit Dutzenden Integrationsvorhaben geeignet, und wie lassen sie sich gegen eine exakte Referenz prüfen?
 \end{enumerate}
 
-\section{Schlussfolgerung}
+\chapter{Schlussfolgerung}
 \label{sec:conclusion}
 
-\subsection{Beantwortung der Leitfrage}
+\section{Beantwortung der Leitfrage}
 Die Frage „Wann ist das Datennetz gut genug für KI?“ hat keine allgemeingültige, absolute Schwelle. Gut genug ist es für einen bestimmten Anwendungsfall, wenn relevante Einflussgrößen verknüpft und definiert sind, Qualität und Aktualität bekannt sind, Antworten nachvollziehbare Provenance tragen und der verbleibende Fehler im Verhältnis zu den Stakes vertretbar ist. Die Arbeit liefert dafür keine Zahl, sondern ein \emph{Verfahren}: die Frage und ihre Folgen bestimmen das Error Budget, das Datennetz bestimmt, wie viel der Abweichung erklärt werden kann, und die Differenz wird dort geschlossen, wo der erwartete Nutzen die Kosten übersteigt.
 
-\subsection{Zusammenfassung der Arbeit}
-\paragraph{Ausgangspunkt und These.}
+\section{Zusammenfassung der Arbeit}
+\subsubsection{Ausgangspunkt und These.}
 Viele Unternehmen setzen KI früher ein, als ihre Daten dafür reif sind. Die Arbeit argumentiert, dass die Verlässlichkeit einer KI-Antwort nicht nur vom Modell, sondern ebenso von Zugänglichkeit, Verknüpfung, Definition und Aktualität der Daten abhängt, und dass Perfektion weder erreichbar noch nötig ist. Entscheidend ist, ob der verbleibende Fehler für den Verwendungszweck klein genug ist. Abweichungen zwischen KI-Antwort und interner Analyse sind dabei nicht nur ein Risiko, sondern ein Diagnosesignal, das Datenlücken und zugleich Lücken in der eigenen Analyse sichtbar machen kann.
 
-\paragraph{Fallstudie.}
+\subsubsection{Fallstudie.}
 Die illustrative Fallstudie eines Maschinenbauzulieferers zeigt eine DB-II-Abweichung von 440\,T€. Die KI erklärte durch den Rabattanstieg nur 60\,T€, also $3/22\approx 13{,}6\,\%$; die beiden größeren Ursachen, Expressfracht (230\,T€) und Produktmix (150\,T€), waren im zugänglichen Datennetz nicht verknüpft oder nicht vorhanden. Eine auf die plausible, aber unvollständige Antwort gestützte Maßnahme hätte einen wichtigen Kunden belastet, ohne die Hauptursache zu treffen. Die Lücke lag im Datennetz, nicht im Sprachmodell.
 
-\paragraph{Formales Modell.}
+\subsubsection{Formales Modell.}
 Das Datennetz wird als gerichteter Multigraph modelliert, ein Data Product als wiederverwendbarer Teil mit Daten, Bedeutung und Label. Die Fehlerzerlegung unterscheidet fehlende Einflussgrößen, Definitionsabweichungen und zufällige Fehler. Die Gut-genug-Bedingung bindet den erwarteten Verlust an die Stakes und ein anwendungsbezogenes Error Budget: $\E[L(\hat y,y^*)]\le\varepsilon W$. Die Abweichung zwischen KI-Antwort und interner Analyse wird als Bayesscher Indikator über den Zustand des Datennetzes gedeutet; die VOI-Bedingung $\E_{\pi_1}[\Delta W]\ge C_{int}$ entscheidet, ob sich eine Integration lohnt.
 
-\paragraph{Vertrauensstufen und Verantwortung.}
+\subsubsection{Vertrauensstufen und Verantwortung.}
 Vier Stufen (Hinweis, Gegenprüfung, Entscheidungsvorbereitung, automatisierte Handlung) ordnen den Einsatz von KI nach den Folgen eines Fehlers; eine höhere Stufe setzt belegbaren Reifegrad voraus und ergibt sich nicht automatisch aus bisherigem Erfolg. Bedeutung, Lieferung und Freigabe sind drei getrennte Verantwortlichkeiten mit benannten Personen (Data Owner, Data Product Owner, Use-Case Owner).
 
-\paragraph{Praktisches Vorgehen.}
+\subsubsection{Praktisches Vorgehen.}
 Das schrittweise Vorgehen beginnt mit einer konkreten Frage und deren Stakes, baut ein Data Product in kleinen Schritten auf, misst Fortschritt mit getrennten Kennzahlen (Bestehensquote, Provenance-Abdeckung, erklärter Anteil, Vollständigkeit kritischer Attribute, Aktualität) und endet in einer Go-live-Checkliste. Mittelstand und Großunternehmen setzen unterschiedliche Schwerpunkte.
 
-\paragraph{Experimentelle Befunde.}
-Die Umsetzung als ausführbares Modell (72 Tests, alle bestanden) wurde an fünf Experimenten geprüft (Abschnitt~\ref{sec:experiment}):
+\subsubsection{Experimentelle Befunde.}
+Die Umsetzung als ausführbares Modell (72 Tests, alle bestanden) wurde an fünf Experimenten geprüft (Kapitel~\ref{sec:experiment}):
 \begin{enumerate}
 \item Die Fallstudie wird exakt reproduziert; der erklärte Anteil beträgt $3/22\approx 13{,}64\,\%$.
 \item Der Entscheider stimmt in allen 33 geprüften Fällen (12 Budgetstufen, 21 Zufallsinstanzen) mit einer vollständigen Aufzählung im Nettonutzen überein.
@@ -812,7 +816,7 @@ Die Umsetzung als ausführbares Modell (72 Tests, alle bestanden) wurde an fünf
 \end{enumerate}
 Alle Messungen stammen aus einer geteilten virtuellen Maschine mit zwei Kernen und 7{,}8\,GiB Arbeitsspeicher (Tabelle~\ref{tab:hardware}); die Kosten- und Abhängigkeitsannahmen sind Rechenbeispiele.
 
-\subsection{Praktische Folgerungen}
+\section{Praktische Folgerungen}
 Aus Fallstudie, Modell und Experimenten folgen sechs Kernaussagen:
 \begin{enumerate}
 \item Die Qualität einer KI-Erklärung hängt maßgeblich von den verfügbaren Daten, ihren Verbindungen und ihrer fachlichen Bedeutung ab, nicht allein vom Modell.
@@ -832,18 +836,18 @@ Für die beteiligten Rollen bedeutet das Folgendes:
 \item[Management.] Die Frage nach dem Modell durch die Frage nach der Datenlage für die konkrete Entscheidung ergänzen und Datenarbeit als Investition mit erwartetem Nutzen statt als Nebenaufgabe behandeln.
 \end{description}
 
-\subsection{Schlussbemerkung}
+\section{Schlussbemerkung}
 Die Arbeit ist ein konzeptioneller und methodischer Beitrag mit einer geprüften Umsetzung, kein empirischer Wirksamkeitsnachweis. Ihr Wert liegt darin, die Frage nach der Eignung des Datennetzes präzise zu stellen, ökonomisch zu begründen und rechnerisch nachprüfbar zu machen. Die Belastbarkeit der Zahlen hängt von der Qualität der Annahmen ab; der Ausblick benennt, wie sie durch reale Daten ersetzt werden können.
 
 \begin{quote}
 \textbf{Leitgedanke:} Nicht nur fragen, ob die KI gut genug ist, sondern ob das Datennetz für diese Frage gut genug ist. Bis dahin die KI als Hinweis nutzen, ihre Antworten mit der eigenen Analyse abgleichen und aus jeder Abweichung lernen.
 \end{quote}
 
-\section*{Danksagung}
+\chapter*{Danksagung}
 Die Arbeit basiert auf den Ideen und Folien von ai-data-network-economic-approach-en.md sowie auf den wissenschaftlichen Vorarbeiten des Autors zur wirtschaftlichen Bewertung eines SAT-Solvers und zu Wirtschaftssystemen unter Unsicherheit \cite{sat2026,uncertainty2026}.
 
 \appendix
-\section{Glossar}
+\chapter{Glossar}
 \begin{description}[style=nextline]
 \item[Datennetz] Gesamtheit der Unternehmensdaten und der fachlichen sowie technischen Verbindungen zwischen ihnen.
 \item[Data Product] Wiederverwendbare Einheit aus Daten, ihrer Bedeutung und einem Label mit Nutzungsvoraussetzungen und benannter Verantwortung.
@@ -857,20 +861,20 @@ Die Arbeit basiert auf den Ideen und Folien von ai-data-network-economic-approac
 \item[Error Budget] Für einen Anwendungsfall zulässiger Fehler, bestimmt durch Stakes und mögliche Folgen.
 \item[Gegenprüfung (Cross-check)] Vergleich einer KI-Antwort mit eigener Analyse, Strategie oder fachlich geprüfter Referenz.
 \item[MCP] Model Context Protocol; ein Standard, über den KI-Anwendungen auf Daten und Werkzeuge zugreifen können.
-\item[Integrationsoption] Mögliche Anbindung einer Datenquelle oder eines Attributs mit erwartetem Nutzen, Kosten und gegebenenfalls benötigten Vorleistungen (Abschnitt~\ref{sec:experiment}).
+\item[Integrationsoption] Mögliche Anbindung einer Datenquelle oder eines Attributs mit erwartetem Nutzen, Kosten und gegebenenfalls benötigten Vorleistungen (Kapitel~\ref{sec:experiment}).
 \item[Nettonutzen] Differenz aus erwartetem Nutzen und Integrationskosten einer Auswahl von Integrationsoptionen.
 \item[Erklärter Anteil] Anteil einer bekannten Abweichung, den eine Antwort durch sichtbare Ursachen erklärt.
 \item[Value of Information (VOI)] Erwarteter zusätzlicher Nutzen einer Information oder Datenverbesserung im Vergleich zu ihren Kosten.
 \end{description}
 
-\section{Formale Beweise und Erweiterungen}
-\subsection{Erweiterung: Nichtlineare Einflussmodelle}
+\chapter{Formale Beweise und Erweiterungen}
+\section{Erweiterung: Nichtlineare Einflussmodelle}
 Die lineare Darstellung kann durch eine allgemeine nichtlineare Regressionsdarstellung $y^*=g(S_q)$ mit Lipschitz-Bedingung $(\exists L: |g(x)-g(x')|\le L\|x-x'\|)$ verallgemeinert werden. Dann gilt eine analoge Fehlerabschätzung:
 \[
 |\hat y-y^*| \le L\cdot \|S_q-\tilde S_q\| + |B_{def}| + |\eta|.
 \]
 
-\subsection{Beweisskizze: VOI-Berechnung}
+\section{Beweisskizze: VOI-Berechnung}
 Mit Posterior $\pi_1(\theta)$ ist der erwartete Wert der Integration eines zusätzlichen Datenobjekts $z$:
 \[
 \E_{\pi_1}[\Delta W] = \sum_{\theta} \pi_1(\theta) \big( W(\text{with }z,\theta)-W(\text{without }z,\theta)\big).
@@ -878,10 +882,43 @@ Mit Posterior $\pi_1(\theta)$ ist der erwartete Wert der Integration eines zusä
 Dies kann numerisch über Simulation oder historische "what-if"-Analysen geschätzt werden.
 
 \bibliographystyle{plain}
-\begin{thebibliography}{9}
-\bibitem{webinar2026} Michael Sullmann (BE-terna), Webinar "Data Product and AI in Controlling", Okt 2026.
+\begin{thebibliography}{99}
+\bibitem{webinar2026} Michael Sullmann (BE-terna), Webinar \textit{Data Product and AI in Controlling}, 15. Oktober 2026.
 \bibitem{sat2026} Stephan Epp. \emph{Wirtschaftliche Konsequenzen eines effizienten SAT-Solvers}. 12. Oktober 2026. \url{https://github.com/naphz86/subgraph-sat-solver-econ}.
 \bibitem{uncertainty2026} Stephan Epp. \emph{Wirtschaftssysteme unter Unsicherheit}. 3. September 2026. \url{https://github.com/naphets86/odd/tree/main/science/uncrtecos}.
+\bibitem{nistairmf23} Tabassi, E. \emph{Artificial Intelligence Risk Management Framework (AI RMF 1.0)}. NIST AI 100-1. National Institute of Standards and Technology, 2023. \url{https://doi.org/10.6028/NIST.AI.100-1}.
+\bibitem{iso42001} International Organization for Standardization and International Electrotechnical Commission. \emph{ISO/IEC 42001:2023: Information technology---Artificial intelligence---Management system}. ISO, 2023. \url{https://www.iso.org/standard/81230.html}.
+\bibitem{iso23894} International Organization for Standardization and International Electrotechnical Commission. \emph{ISO/IEC 23894:2023: Information technology---Artificial intelligence---Guidance on risk management}. ISO, 2023. \url{https://www.iso.org/standard/77304.html}.
+\bibitem{euaiact24} European Parliament and Council of the European Union. \emph{Regulation (EU) 2024/1689 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act)}. \emph{Official Journal of the European Union}, 2024. \url{https://eur-lex.europa.eu/eli/reg/2024/1689/oj}.
+\bibitem{iso5259} International Organization for Standardization and International Electrotechnical Commission. \emph{ISO/IEC 5259-1:2024: Artificial intelligence---Data quality for analytics and machine learning (ML)---Part 1: Overview, terminology, and examples}. ISO, 2024. \url{https://www.iso.org/standard/81088.html}.
+\bibitem{iso25012} International Organization for Standardization and International Electrotechnical Commission. \emph{ISO/IEC 25012:2008: Software engineering---Software product Quality Requirements and Evaluation (SQuaRE)---Data quality model}. ISO, 2008. \url{https://www.iso.org/standard/35736.html}.
+\bibitem{wangstrong96} Wang, R. Y., and Strong, D. M. ``Beyond Accuracy: What Data Quality Means to Data Consumers.'' \emph{Journal of Management Information Systems}, 12(4), 5--33, 1996. \url{https://doi.org/10.1080/07421222.1996.11518099}.
+\bibitem{pipino02} Pipino, L. L., Lee, Y. W., and Wang, R. Y. ``Data Quality Assessment.'' \emph{Communications of the ACM}, 45(4), 211--218, 2002. \url{https://doi.org/10.1145/505248.506010}.
+\bibitem{abraham19} Abraham, R., Schneider, J., and vom Brocke, J. ``Data governance: A conceptual framework, structured review, and research agenda.'' \emph{International Journal of Information Management}, 49, 424--438, 2019. \url{https://doi.org/10.1016/j.ijinfomgt.2018.07.008}.
+\bibitem{khatribrown10} Khatri, V., and Brown, C. V. ``Designing Data Governance.'' \emph{Communications of the ACM}, 53(1), 148--152, 2010. \url{https://doi.org/10.1145/1629175.1629210}.
+\bibitem{otto11} Otto, B. ``Data Governance.'' \emph{Business \& Information Systems Engineering}, 3(4), 241--244, 2011. \url{https://doi.org/10.1007/s12599-011-0162-8}.
+\bibitem{dama17} DAMA International. \emph{DAMA-DMBOK: Data Management Body of Knowledge}. 2nd ed. Technics Publications, 2017. \url{https://technicspub.com/dmbok/}.
+\bibitem{dehghani22} Dehghani, Z. \emph{Data Mesh: Delivering Data-Driven Value at Scale}. O'Reilly Media, 2022. \url{https://www.oreilly.com/library/view/data-mesh/9781492092390/}.
+\bibitem{ottojarke19} Otto, B., and Jarke, M. ``Designing a multi-sided data platform: findings from the International Data Spaces case.'' \emph{Electronic Markets}, 29(4), 561--580, 2019. \url{https://doi.org/10.1007/s12525-019-00362-x}.
+\bibitem{nistbdif19} Chang, W., and Grady, N. \emph{NIST Big Data Interoperability Framework: Volume 1, Definitions}. NIST Special Publication 1500-1r2. National Institute of Standards and Technology, 2019. \url{https://doi.org/10.6028/NIST.SP.1500-1r2}.
+\bibitem{provo13} Lebo, T., Sahoo, S., and McGuinness, D. \emph{PROV-O: The PROV Ontology}. W3C Recommendation, 30 April 2013. \url{https://www.w3.org/TR/prov-o/}.
+\bibitem{fair16} Wilkinson, M. D., et al. ``The FAIR Guiding Principles for scientific data management and stewardship.'' \emph{Scientific Data}, 3, article 160018, 2016. \url{https://doi.org/10.1038/sdata.2016.18}.
+\bibitem{datasheets21} Gebru, T., Morgenstern, J., Vecchione, B., Vaughan, J. W., Wallach, H., Daum\'e III, H., and Crawford, K. ``Datasheets for datasets.'' \emph{Communications of the ACM}, 64(12), 86--92, 2021. \url{https://doi.org/10.1145/3458723}.
+\bibitem{modelcards19} Mitchell, M., et al. ``Model Cards for Model Reporting.'' In \emph{Proceedings of the Conference on Fairness, Accountability, and Transparency (FAT* '19)}, 220--229, 2019. \url{https://doi.org/10.1145/3287560.3287596}.
+\bibitem{sculley15} Sculley, D., et al. ``Hidden Technical Debt in Machine Learning Systems.'' In \emph{Advances in Neural Information Processing Systems 28}, 2503--2511, 2015. \url{https://proceedings.neurips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html}.
+\bibitem{polyzotis17} Polyzotis, N., Roy, S., Whang, S. E., and Zinkevich, M. ``Data Management Challenges in Production Machine Learning.'' In \emph{Proceedings of the 2017 ACM International Conference on Management of Data (SIGMOD '17)}, 1723--1726. ACM, 2017. \url{https://doi.org/10.1145/3035918.3054782}.
+\bibitem{howard66} Howard, R. A. ``Information Value Theory.'' \emph{IEEE Transactions on Systems Science and Cybernetics}, 2(1), 22--26, 1966. \url{https://doi.org/10.1109/TSSC.1966.300074}.
+\bibitem{raiffa68} Raiffa, H. \emph{Decision Analysis: Introductory Lectures on Choices under Uncertainty}. Addison-Wesley, 1968. \url{https://search.worldcat.org/search?q=ti%3ADecision+Analysis%3A+Introductory+Lectures+on+Choices+under+Uncertainty+au%3ARaiffa}.
+\bibitem{keeneyraiffa76} Keeney, R. L., and Raiffa, H. \emph{Decisions with Multiple Objectives: Preferences and Value Tradeoffs}. Wiley, 1976. \url{https://search.worldcat.org/search?q=ti%3ADecisions+with+Multiple+Objectives+au%3AKeeney}.
+\bibitem{gum08} Joint Committee for Guides in Metrology. \emph{Evaluation of Measurement Data---Guide to the Expression of Uncertainty in Measurement}. JCGM 100:2008, 2008. \url{https://www.bipm.org/en/committees/jc/jcgm/publications}.
+\bibitem{jcg10612} Joint Committee for Guides in Metrology. \emph{Evaluation of Measurement Data---The Role of Measurement Uncertainty in Conformity Assessment}. JCGM 106:2012, 2012. \url{https://www.bipm.org/en/committees/jc/jcgm/publications}.
+\bibitem{pearl09} Pearl, J. \emph{Causality: Models, Reasoning, and Inference}. 2nd ed. Cambridge University Press, 2009. \url{https://doi.org/10.1017/CBO9780511803161}.
+\bibitem{hernan20} Hern\'an, M. A., and Robins, J. M. \emph{Causal Inference: What If}. Chapman \& Hall/CRC, 2020. \url{https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/}.
+\bibitem{leesee04} Lee, J. D., and See, K. A. ``Trust in Automation: Designing for Appropriate Reliance.'' \emph{Human Factors}, 46(1), 50--80, 2004. \url{https://doi.org/10.1518/hfes.46.1.50_30392}.
+\bibitem{parasuraman97} Parasuraman, R., and Riley, V. ``Humans and Automation: Use, Misuse, Disuse, Abuse.'' \emph{Human Factors}, 39(2), 230--253, 1997. \url{https://doi.org/10.1518/001872097778543886}.
+\bibitem{amershi19} Amershi, S., Weld, D., Vorvoreanu, M., Fourney, A., Nushi, B., Collisson, P., Suh, J., Iqbal, S., Bennett, P. N., Inkpen, K., Teevan, J., Kikin-Gil, R., and Horvitz, E. ``Guidelines for Human-AI Interaction.'' In \emph{Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems}, 1--13. ACM, 2019. \url{https://doi.org/10.1145/3290605.3300233}.
+\bibitem{achterberg09} Achterberg, T. ``SCIP: A State-of-the-Art Solver for Mixed Integer Programming.'' \emph{Mathematical Programming Computation}, 1, 1--41, 2009. \url{https://doi.org/10.1007/s12532-008-0001-1}.
+\bibitem{wolsey98} Wolsey, L. A. \emph{Integer Programming}. John Wiley \& Sons, 1998. \url{https://search.worldcat.org/search?q=ti%3AInteger+Programming+au%3AWolsey}.
 \end{thebibliography}
 
 \end{document}
