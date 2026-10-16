@@ -25,12 +25,14 @@ dev = [
 
 [tool.setuptools]
 # Importname `aidataeco`: `src` ist als Paketname mehrdeutig (auch das Referenzprojekt nutzt ihn).
-packages = ["aidataeco", "subgraph_sat_solver_econ"]
-package-dir = { aidataeco = "src", subgraph_sat_solver_econ = "src/subgraph_sat_solver_econ" }
+# Nur das eigene Paket wird hier gebaut; `subgraph_sat_solver_econ` kommt aus der Abhängigkeit.
+packages = ["aidataeco"]
+package-dir = { aidataeco = "src" }
 
 [tool.coverage.run]
 source = ["src"]
 branch = true
+disable_warnings = ["no-ctracer"]
 omit = [
     "tests/*",
     "src/experiments.py",
@@ -43,7 +45,7 @@ omit = [
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
-pythonpath = [".", "src"]
+pythonpath = ["."]
 addopts = "-q --cov=src --cov-report=html:doc/coverage --cov-report=term-missing"
 markers = [
     "unit: unit test",
