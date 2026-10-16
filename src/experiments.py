@@ -11,15 +11,21 @@ Geschrieben werden ``e1_fallstudie.json`` ... ``e5_reproduzierbarkeit.json`` und
 
 from __future__ import annotations
 
+import ctypes
 import itertools
+import os
 import random
-import resource
 import statistics
 import sys
 import time
 from fractions import Fraction
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
+
+if os.name == "nt":
+    from ctypes import wintypes
+else:
+    import resource
 
 from aidataeco.casestudy import MarginCase, margin_case
 from aidataeco.evaluation import Cause, explained_share
@@ -82,6 +88,43 @@ def _median_time(function, repeats: int):
         result = function()
         times.append(time.perf_counter() - start)
     return statistics.median(times), result
+
+
+def _peak_rss_mib() -> float:
+    if os.name == "nt":
+        class ProcessMemoryCounters(ctypes.Structure):
+            _fields_ = [
+                ("cb", wintypes.DWORD),
+                ("PageFaultCount", wintypes.DWORD),
+                ("PeakWorkingSetSize", ctypes.c_size_t),
+                ("WorkingSetSize", ctypes.c_size_t),
+                ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                ("PagefileUsage", ctypes.c_size_t),
+                ("PeakPagefileUsage", ctypes.c_size_t),
+            ]
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+        psapi = ctypes.WinDLL("psapi", use_last_error=True)
+        get_memory_info = psapi.GetProcessMemoryInfo
+        get_memory_info.argtypes = [
+            wintypes.HANDLE,
+            ctypes.POINTER(ProcessMemoryCounters),
+            wintypes.DWORD,
+        ]
+        get_memory_info.restype = wintypes.BOOL
+
+        counters = ProcessMemoryCounters()
+        counters.cb = ctypes.sizeof(counters)
+        if not get_memory_info(kernel32.GetCurrentProcess(), ctypes.byref(counters), counters.cb):
+            raise ctypes.WinError(ctypes.get_last_error())
+        return counters.PeakWorkingSetSize / (1024 * 1024)
+
+    peak_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return peak_rss / (1024 * 1024 if sys.platform == "darwin" else 1024)
 
 
 # ---------------------------------------------------------------- E1 bis E5
@@ -171,7 +214,7 @@ def main(out: Path) -> Dict[str, Path]:
     start = time.perf_counter()
     case = margin_case()
     paths = {r.name: r.write(out) for r in (e1(case), e2(), e3(), e4(case), e5(case))}
-    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024  # Linux: KiB -> MiB
+    peak = _peak_rss_mib()
     from aidataeco.experiment import canonical_json
     summary = out / "zusammenfassung.json"
     summary.write_text(canonical_json({"gesamtzeit_s": time.perf_counter() - start,
