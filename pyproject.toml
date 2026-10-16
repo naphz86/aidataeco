@@ -25,8 +25,8 @@ dev = [
 
 [tool.setuptools]
 # Importname `aidataeco`: `src` ist als Paketname mehrdeutig (auch das Referenzprojekt nutzt ihn).
-packages = ["aidataeco"]
-package-dir = { aidataeco = "src" }
+packages = ["aidataeco", "subgraph_sat_solver_econ"]
+package-dir = { aidataeco = "src", subgraph_sat_solver_econ = "src/subgraph_sat_solver_econ" }
 
 [tool.coverage.run]
 source = ["src"]

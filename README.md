@@ -2,6 +2,11 @@
 
 **Ein ökonomischer und formaler Ansatz zur verantwortbaren Nutzung von KI in Unternehmen**
 
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/Tests-72%20passed-4c1)](tests/)
+[![Test Coverage](https://img.shields.io/badge/Test%20Coverage-99%25-brightgreen)](doc/coverage/index.html)
+[![scicov](https://img.shields.io/badge/scicov-10-ff69b4)](doc/coverage/index.html)
+
 Dieses Repository enthält eine wissenschaftliche Arbeit über die Frage, wann das Datennetz eines Unternehmens für eine bestimmte KI-Anwendung gut genug ist. Im Mittelpunkt steht nicht die Suche nach fehlerfreien Daten oder einem perfekten Modell. Entscheidend ist, ob die verbleibende Unsicherheit für den jeweiligen Zweck und die möglichen Folgen einer Entscheidung vertretbar ist.
 
 Die Arbeit verbindet ein formales Modell von Datennetzen und Data Products mit einer wirtschaftlichen Betrachtung von Fehlerbudgets, einer Fallstudie zur Margenanalyse und einem schrittweisen Vorgehen für Organisationen. KI wird dabei zunächst als Hinweis- und Gegenprüfungswerkzeug verstanden. Abweichungen zwischen KI-Antwort und Unternehmensanalyse können auf Datenlücken hinweisen, aber auch eine unvollständige interne Analyse sichtbar machen.
@@ -13,18 +18,16 @@ Die Arbeit verbindet ein formales Modell von Datennetzen und Data Products mit e
 - [Überblick](#überblick)
 - [Kernaussagen](#kernaussagen)
 - [Inhalt der Arbeit](#inhalt-der-arbeit)
-- [Fallstudie: sinkende Marge](#fallstudie-sinkende-marge)
+- [Fallstudie: Sinkende Marge](#fallstudie-sinkende-marge)
 - [Formales Modell und wirtschaftliche Perspektive](#formales-modell-und-wirtschaftliche-perspektive)
 - [Vertrauensstufen](#vertrauensstufen)
 - [Data Products und Verantwortlichkeiten](#data-products-und-verantwortlichkeiten)
 - [Projektstruktur](#projektstruktur)
 - [Voraussetzungen](#voraussetzungen)
-- [PDF erstellen](#pdf-erstellen)
-- [Prüfen und weiterentwickeln](#prüfen-und-weiterentwickeln)
-- [Stand und Grenzen](#stand-und-grenzen)
+- [Python-API](#python-api)
+- [Quellcode und Tests](#quellcode-und-tests)
 - [Quellen und weiterführende Arbeiten](#quellen-und-weiterführende-arbeiten)
-- [Software und Tests](#software-und-tests)
-- [Lizenz und Nutzung](#lizenz-und-nutzung)
+- [Erwerb](#erwerb)
 
 ## Überblick
 
@@ -69,7 +72,7 @@ Die LaTeX-Arbeit entwickelt das Konzept in folgender Reihenfolge:
 
 Das vollständige Inhaltsverzeichnis steht auch am Anfang des [PDFs](science/aidataeco.pdf).
 
-## Fallstudie: sinkende Marge
+## Fallstudie: Sinkende Marge
 
 Die illustrative Webinar-Fallstudie betrachtet einen Maschinenbauzulieferer. Der Umsatz steigt von 10,0 Mio. € auf 11,0 Mio. €, während die Deckungsbeitragsmarge II von 28 % auf 24 % fällt. Die daraus abgeleitete DB-II-Differenz beträgt 440 T€.
 
@@ -199,92 +202,225 @@ Für das Erstellen der PDF-Datei benötigt man:
 
 Die Arbeit ist UTF-8-kodiert und mit `pdflatex`/`latexmk` aufgebaut. Für den Python-Code wird Python ab 3.11 benötigt, siehe [Software und Tests](#software-und-tests); für die PDF ist keine Python-Laufzeit nötig.
 
-## PDF erstellen
+## Python-API
 
-Die folgenden Befehle verwenden PowerShell auf Windows.
+Das Paket `aidataeco` bildet die Konzepte der Arbeit als kleine, typisierte Bausteine ab. Installiere das Projekt zunächst wie unter [Software und Tests](#software-und-tests) beschrieben. Die Beispiele importieren direkt aus `aidataeco`; `src` ist nur das Verzeichnis des Quellcodes.
 
-### Build im Dokumentverzeichnis
-
-```powershell
-latexmk -pdf -interaction=nonstopmode -halt-on-error science\aidataeco.tex
+```python
+from aidataeco.model import Node, Edge, DataNetwork, Meaning, Label, DataProduct
 ```
 
-Dieser Befehl erzeugt die PDF-Datei und LaTeX-Hilfsdateien neben der Quelle unter `science\`. Die PDF-Datei ist versioniert; der Build kann daher eine bereits vorhandene Projekt-PDF ersetzen. Vor dem Bauen sollte `git status --short` geprüft und ein beabsichtigter PDF-Unterschied anschließend kontrolliert werden.
+Geldbeträge, Anteile und Wahrscheinlichkeiten werden intern mit `fractions.Fraction` exakt gerechnet. Ein `float` wie `0.1` wird über seine Dezimaldarstellung als `1/10` übernommen. Nicht belegte Werte bleiben `None`; fehlende Quellen, Provenance oder Verantwortliche werden nicht als Erfolg interpretiert. Ungültige Eingaben führen in der Regel zu `ValueError`.
 
-### Build in einem separaten Verzeichnis
+### Datennetz und Data Product
 
-Um die vorhandene PDF und die Quelle nicht mit lokalen Build-Ausgaben zu überschreiben, lässt sich ein separates Verzeichnis verwenden:
+`Node` beschreibt einen Datenbestand, `Edge` eine fachliche Verknüpfung oder Transformation. `DataNetwork` prüft eindeutige Knotennamen und gültige Kanten. `DataProduct` bündelt ein Teilnetz, seine Bedeutung und sein Verantwortungs- und Qualitätslabel.
 
-```powershell
-$build = Join-Path $env:TEMP "aidataeco-build"
-New-Item -ItemType Directory -Force -Path $build | Out-Null
-latexmk -pdf -interaction=nonstopmode -halt-on-error "-outdir=$build" science\aidataeco.tex
+```python
+from datetime import date
+from fractions import Fraction
+
+from aidataeco.model import DataNetwork, DataProduct, Edge, Label, Meaning, Node
+
+edges = (
+  Edge("ERP", "Auftragsposition", "Join über Auftrags-ID"),
+  Edge("Auftragsposition", "Produktstamm", "Join über Produkt-ID"),
+)
+network = DataNetwork(
+  nodes=(
+    Node("ERP", frozenset({"Umsatz", "Rabatt"}), Fraction(98, 100), date(2026, 9, 30)),
+    Node("Auftragsposition", frozenset({"Auftrags-ID", "Produkt-ID"})),
+    Node("Produktstamm", frozenset({"Produktgruppe"})),
+    Node("Logistik", frozenset({"Expressfracht"})),
+  ),
+  edges=edges,
+)
+product = DataProduct(
+  name="Sales Result 360",
+  network=network,
+  node_names=frozenset({"ERP", "Auftragsposition", "Produktstamm"}),
+  edges=edges,
+  meaning=Meaning(
+    definitions={"DB II": "Umsatz abzüglich variabler Kosten"},
+    synonyms={"Marge": "DB II"},
+    rules=("Fracht wird der verursachenden Auftragsposition zugeordnet",),
+  ),
+  label=Label("Controlling", "3.0", frequency_days=1, quality=Fraction(98, 100)),
+)
+
+print(product.meaning.resolve("Marge"))
+print(product.is_closed([("ERP", "Produktstamm")]))  # True: Join-Pfad ist vorhanden
+print(product.missing_links([("Auftragsposition", "Logistik")]))
+# (("Auftragsposition", "Logistik"),): Die Frachtquelle ist noch nicht verbunden.
 ```
 
-Die erzeugte PDF liegt danach in `$build`. Das Build-Verzeichnis ist lokal und muss nicht zum Repository hinzugefügt werden.
+`Provenance` dokumentiert Quelle, Datenstichtag und verwendete Definitionen. `Answer` verbindet diese Provenance mit einem Ergebniswert. `None` bei `Answer.value` steht für eine unbeantwortete Frage, nicht für den Zahlenwert null.
 
-### Linux und macOS
+```python
+from datetime import date
+from fractions import Fraction
 
-```bash
-mkdir -p /tmp/aidataeco-build
-latexmk -pdf -interaction=nonstopmode -halt-on-error \
-  -outdir=/tmp/aidataeco-build \
-  science/aidataeco.tex
+from aidataeco.model import Answer, Provenance
+
+answer = Answer(
+  Fraction(24),
+  Provenance(
+    sources=(("Sales Result 360", "3.0"),),
+    cutoff=date(2026, 9, 30),
+    rules=("DB II = Umsatz abzüglich variable Kosten",),
+  ),
+)
 ```
 
-Wenn `latexmk` wegen fehlender TeX-Pakete abbricht, sind zuerst die in der Fehlermeldung genannten Pakete über die jeweilige TeX-Distribution zu installieren. Paketinstallation und TeX-Updates sind nicht Bestandteil des Repository-Builds.
+### Error Budget
 
-### Build-Ausgaben
+`ErrorBudget` bildet die Gut-genug-Bedingung `erwarteter Verlust <= epsilon * Stakes` ab. Die Schwelle wird pro Einsatz festgelegt; das Modul setzt keinen universellen Grenzwert.
 
-Ein typischer Build erzeugt `.aux`, `.fdb_latexmk`, `.fls`, `.log`, `.out` und `.toc`; je nach Editor und Optionen kann auch eine SyncTeX-Datei erzeugt werden. Die verlässliche Erfolgskontrolle ist der Exit-Code von `latexmk` und eine tatsächlich erzeugte, lesbare PDF. Warnungen zu Zeilenumbrüchen oder Sprachmustern sollten gesondert geprüft werden; sie sind nicht in jedem Fall Kompilierfehler.
+```python
+from fractions import Fraction
 
-## Prüfen und weiterentwickeln
+from aidataeco.errorbudget import ErrorBudget, good_enough_linear
 
-Für den Python-Code gibt es Tests (siehe [Software und Tests](#software-und-tests)); für reine Änderungen an der Dokumentation gibt es keine automatisierten Dokumentationstests. Nach einer Änderung an der TeX-Quelle empfiehlt sich mindestens:
-
-1. die PDF mit `latexmk -pdf -interaction=nonstopmode -halt-on-error ...` zu bauen;
-2. den Build-Exit-Code zu kontrollieren;
-3. die erzeugte PDF zu öffnen und Inhaltsverzeichnis, Tabellen, Formeln, Links und Literaturverzeichnis zu prüfen;
-4. den LaTeX-Log auf unbeabsichtigte `Undefined control sequence`, ungelöste Referenzen, übervolle Zeilen und sonstige relevante Warnungen zu prüfen;
-5. `git diff --check` und `git status --short` auszuführen;
-6. Änderungen an der PDF nur dann einzuchecken, wenn sie zum aktualisierten Quelltext gehören und visuell geprüft wurden.
-
-Ein projektbezogener Check des Arbeitsbaums:
-
-```powershell
-git diff --check
-git status --short
+budget = ErrorBudget(stakes=100_000, epsilon=Fraction(1, 100))
+print(budget.limit)  # 1000
+print(good_enough_linear(cost_per_unit=250, expected_abs_error=3, budget=budget))
+# True: 250 * 3 = 750 liegt innerhalb des Budgets von 1000.
 ```
 
-### Wissenschaftliche und redaktionelle Änderungen
+Für eine explizite Fehlerzerlegung stehen `ErrorDecomposition` mit `total` und `expected`, `missing_bias` für nicht beobachtete Einflussgrößen sowie `lipschitz_bound` für eine Abstandsschranke zur Verfügung.
 
-- Inhaltliche Aussagen sollten kenntlich machen, ob sie Definition, Modellannahme, illustrative Fallstudie oder empirischer Befund sind.
-- Zahlen aus der Fallstudie nicht als unabhängig erhobene Unternehmensdaten darstellen.
-- Die im Webinar genannten Umfragewerte als Angaben aus der Präsentation kennzeichnen; die Arbeit weist darauf hin, dass die genaue Zuordnung der Einzelwerte zu Quellen dort nicht näher aufgeschlüsselt ist.
-- Neue Literaturangaben vollständig und konsistent im Text sowie im Literaturverzeichnis ergänzen.
-- Aussagen zu Error Budgets, statistischer Zuverlässigkeit oder wirtschaftlichem Nutzen nicht allgemeiner formulieren, als es die zugrunde liegenden Annahmen erlauben.
-- Änderungen an mathematischen Definitionen und Beweisen auch in den praktischen Beispielen, Messgrößen und Checklisten nachvollziehen.
-- Bei überarbeiteten TeX-Abschnitten PDF-Lesezeichen, Umlaute, Sonderzeichen, mathematische Symbole und Tabellenumbrüche kontrollieren.
+### Antworten evaluieren
 
-## Stand und Grenzen
+`ReferenceCase` beschreibt Frage, Referenzwert, Toleranz und optionales Gewicht. `evaluate` liefert Bestehensquote, Provenance-Abdeckung und Zahl unbeantworteter Fragen getrennt zurück; diese Kennzahlen werden bewusst nicht zu einer Gesamtnote verrechnet.
 
-Dieses Repository ist in erster Linie ein **wissenschaftliches Dokumentationsprojekt**. Der Code in `src/` setzt Definitionen und Kennzahlen der Arbeit als geprüfte Bausteine um; er ist kein fertiges KI- oder Datenprodukt. Die formalen Modelle strukturieren die Argumentation; sie stellen weder ein zertifiziertes Messverfahren noch eine produktionsreife Governance-Lösung dar. Ein erfolgreicher Testlauf ist kein empirischer Wirksamkeitsnachweis und keine Freigabe für autonome Handlungen.
+```python
+from datetime import date
+from fractions import Fraction
 
-Die Fallstudie ist illustrativ und wird auf das zugrunde liegende Webinar zurückgeführt. Die dort genannten Prozentwerte werden in der Arbeit als Präsentationsangaben gekennzeichnet und nicht als unabhängig verifizierte Primärerhebung ausgegeben. Für Entscheidungen in einem Unternehmen wären geeignete interne Daten, fachlich geprüfte Referenzfälle und eine nachvollziehbare Fehlerbewertung erforderlich.
+from aidataeco.evaluation import ReferenceCase, evaluate
+from aidataeco.model import Answer, Provenance
 
-Auch die vier Vertrauensstufen sind ein konzeptioneller Rahmen. Sie definieren keine branchenspezifische Norm, regulatorische Einstufung oder automatische Freigabe. Die Entscheidung über eine reale KI-Anwendung bleibt an den konkreten Stakes, den bekannten Einschränkungen und den zuständigen Personen auszurichten.
+cases = [
+  ReferenceCase("DB-II-Marge Q3", 24, Fraction(1, 2), weight=3),
+  ReferenceCase("Rabattquote Q3", 10, 1, weight=1),
+]
+provenance = Provenance(
+  sources=(("Sales Result 360", "3.0"),),
+  cutoff=date(2026, 9, 30),
+  rules=("DB II = Umsatz abzüglich variable Kosten",),
+)
+answers = [Answer(Fraction(47, 2), provenance), Answer(None)]
+result = evaluate(cases, answers)
 
-## Quellen und weiterführende Arbeiten
+print(result.pass_rate)             # 3/4
+print(result.provenance_coverage)    # 1/2
+print(result.unanswered)            # 1
+```
 
-Die Arbeit führt die folgenden Quellen im Literaturverzeichnis:
+Weitere Kennzahlen sind `explained_share` für den erklärten Anteil eines Effekts, `attribute_completeness` für fehlende Attribute und `is_fresh` für die Aktualität eines Datenbestands. Unbekannte Aktualität zählt nicht als aktuell.
 
-1. **Michael Sullmann (BE-terna).** Webinar *Data Product and AI in Controlling*, Oktober 2026. Grundlage für die im Text als Webinar-Angaben gekennzeichneten Inhalte und die illustrative Fallstudie.
-2. **Stephan Epp.** *Wirtschaftliche Konsequenzen eines effizienten SAT-Solvers*, 12. Oktober 2026. [Repository](https://github.com/naphz86/subgraph-sat-solver-econ).
-3. **Stephan Epp.** *Wirtschaftssysteme unter Unsicherheit*, 3. September 2026. [Repository und Wissenschaftsordner](https://github.com/naphets86/odd/tree/main/science/uncrtecos).
+### Abweichungen diagnostizieren
 
-Die Arbeiten [2] und [3] sind ergänzende wissenschaftliche Vorarbeiten des Autors. Ihre Nennung bedeutet nicht, dass die vorliegende Arbeit ein SAT-Solver- oder ein Wirtschaftssystem-Simulationspaket enthält.
+Die Diagnosefunktionen aktualisieren Hypothesen über mögliche Ursachen einer Abweichung. Bayes-Rechnungen bleiben exakt; Nutzen und Integrationskosten können anschließend mit der VOI-Bedingung verglichen werden.
 
-## Software und Tests
+```python
+from fractions import Fraction
+
+from aidataeco.diagnosis import bayes_update, expected_gain, integration_rational
+
+posterior = bayes_update(
+  {"Quelle fehlt": Fraction(1, 2), "Analyse unvollständig": Fraction(1, 2)},
+  {"Quelle fehlt": Fraction(3, 4), "Analyse unvollständig": Fraction(1, 4)},
+)
+gain = expected_gain(posterior, {"Quelle fehlt": 3_000, "Analyse unvollständig": 0})
+print(posterior)                    # Quelle fehlt: 3/4, Analyse unvollständig: 1/4
+print(gain)                         # 2250
+print(integration_rational(gain, 2_000))  # True: erwarteter Zusatznutzen deckt die Kosten.
+```
+
+`DeviationCause` klassifiziert Befunde wie fehlende Quelle, fehlendes Attribut oder veraltete Daten und stellt über `response` eine passende Reaktion bereit. `Deviation` und `processed_deviations` erfassen, ob ein Befund dokumentiert bearbeitet wurde.
+
+### Governance und Freigabe
+
+`Accountabilities` hält Data Owner, Data Product Owner und Use-Case Owner fest. `release_blockers` prüft die Nachweise abhängig von der gewünschten `ReliabilityLevel`; eine leere Liste bedeutet nur, dass nach dem Modell kein Hindernis fehlt, nicht, dass eine formelle oder regulatorische Freigabe erteilt wurde.
+
+```python
+from aidataeco.governance import (
+  Accountabilities, Evidence, ReliabilityLevel, release_blockers,
+)
+
+owners = Accountabilities("Leitung Controlling", "Datenteam", "Fachbereich")
+evidence = Evidence(
+  kpis_defined=True,
+  provenance_available=True,
+  quality_measurable=True,
+  error_budget_met=True,
+  human_decides=True,
+)
+print(release_blockers(ReliabilityLevel.DECISION_PREPARATION, owners, evidence))
+# []
+```
+
+Für `AUTOMATED_ACTION` sind zusätzlich ausdrückliche Freigabe, Protokollierung und ein Eingriffspfad erforderlich. Fehlende Nachweise bleiben standardmäßig `False`.
+
+### Datenintegrationen auswählen
+
+`select_integrations` optimiert erwarteten Zusatznutzen abzüglich Kosten und berücksichtigt Budget sowie Abhängigkeiten. Das Standard-Backend ist `DpllBackend`; für Vergleichs- und Integrationstests kann ein `SatBackend` explizit übergeben werden.
+
+```python
+from aidataeco.integration import IntegrationOption, select_integrations
+
+options = [
+  IntegrationOption("Fracht", gain=230, cost=40, requires=("Join",)),
+  IntegrationOption("Join", gain=0, cost=20),
+  IntegrationOption("Produktgruppe", gain=150, cost=60),
+  IntegrationOption("Teuer", gain=50, cost=80),
+]
+plan = select_integrations(options, budget=70)
+print(plan.selected)   # ("Fracht", "Join")
+print(plan.net_value) # 170
+print(plan.total_cost)  # 60
+```
+
+Nutzen, Kosten und Budget müssen nichtnegative ganze Zahlen in derselben Einheit sein, beispielsweise T€. Eine Option mit `requires=("Join",)` wird nur ausgewählt, wenn auch `Join` ausgewählt werden kann. Ungültige Namen oder Abhängigkeiten führen zu `ValueError`.
+
+### Fallstudie und reproduzierbare Protokolle
+
+`margin_case()` liefert die illustrative Margenfallstudie aus der Arbeit. Die Werte sind Angaben des Beispiels, keine unabhängig erhobenen Unternehmensdaten.
+
+```python
+from aidataeco.casestudy import margin_case
+
+case = margin_case()
+print(case.gap)             # 440 (T€)
+print(case.explained_share) # 3/22, rund 13,6 Prozent
+```
+
+Für eigene Läufe erstellt `run_experiment` ein `ExperimentRecord` mit Eingaben, Konfiguration, Ergebnissen, Versionsangaben und Fingerprint. `write` speichert es als JSON; `Fraction`-Werte werden dabei exakt als Bruchtext serialisiert.
+
+```python
+from pathlib import Path
+
+from aidataeco.casestudy import margin_case
+from aidataeco.experiment import run_experiment
+
+case = margin_case()
+record = run_experiment(
+  name="margenfall",
+  config={"unit": "T€"},
+  inputs={"case": "Q3 2026"},
+  function=lambda config, inputs: {
+    "gap": case.gap,
+    "explained_share": case.explained_share,
+  },
+)
+path = record.write(Path("src/results"))
+print(path, record.fingerprint())
+```
+
+Die zentralen Klassen und Funktionen sind in den Modulen `model`, `errorbudget`, `diagnosis`, `governance`, `evaluation`, `integration`, `casestudy` und `experiment` definiert. Für vollständige Signaturen und Randfälle sind die Docstrings maßgeblich.
+
+## Quellcode und Tests
 
 `src/` setzt das Dokumentmodell als typisierte, exakt rechnende (`fractions.Fraction`) Python-Bausteine um. Fehlende Evidenz zählt nie als Erfolg: unbekannte Qualität, fehlende Provenance, unbeantwortete Testfragen und fehlende Verantwortliche werden als solche ausgewiesen, ungültige Eingaben lösen `ValueError` aus.
 
@@ -323,8 +459,21 @@ pytest
 
 `pytest` führt alle Tests aus und erzeugt den Coverage-Bericht (Zeilen und Zweige) als HTML unter `doc/coverage/index.html`. Der Bericht ist ein Build-Artefakt und wird bei Bedarf neu erzeugt.
 
-## Lizenz und Nutzung
+## Quellen und weiterführende Arbeiten
 
-Die Datei [`LICENSE`](LICENSE) enthält spezifische, restriktive Nutzungsbedingungen und ist **keine übliche Open-Source-Lizenz**. Vor Kopieren, Weiterverbreiten, Verändern oder einer kommerziellen Nutzung sind die Lizenzbedingungen zu lesen und zu klären. Die hier beschriebene Lizenz darf nicht als pauschale Erlaubnis zur Nutzung wissenschaftlicher Inhalte oder zur Generierung daraus abgeleiteter Software ausgelegt werden.
+Die Arbeit führt die folgenden Quellen im Literaturverzeichnis:
 
-Für Fragen zur wissenschaftlichen Einordnung oder zu gewünschten zukünftigen Softwarebestandteilen ist eine konkrete Beschreibung des Anwendungsfalls, der Eingaben, der erwarteten Ausgaben und des gewünschten Prüfverhaltens die beste Grundlage für die weitere Umsetzung.
+1. **Michael Sullmann (BE-terna).** Webinar *Data Product and AI in Controlling*, Oktober 2026. Grundlage für die im Text als Webinar-Angaben gekennzeichneten Inhalte und die illustrative Fallstudie.
+2. **Stephan Epp.** *Wirtschaftliche Konsequenzen eines effizienten SAT-Solvers*, 12. Oktober 2026. [Repository](https://github.com/naphz86/subgraph-sat-solver-econ).
+3. **Stephan Epp.** *Wirtschaftssysteme unter Unsicherheit*, 3. September 2026. [Repository und Wissenschaftsordner](https://github.com/naphets86/odd/tree/main/science/uncrtecos).
+
+Die Arbeiten [2] und [3] sind ergänzende wissenschaftliche Vorarbeiten des Autors. Ihre Nennung bedeutet nicht, dass die vorliegende Arbeit ein SAT-Solver- oder ein Wirtschaftssystem-Simulationspaket enthält.
+
+## Erwerb
+
+Der Preis für diese Software beträgt 4.945.000,00 EUR.
+
+### Zahlungsinformationen
+
+Name: Stephan Epp
+IBAN: DE24 5003 1900 0012 5603 20 BIC: BBVADEFFXXX
